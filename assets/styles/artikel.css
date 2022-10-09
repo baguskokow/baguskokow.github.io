@@ -95,7 +95,7 @@
 .keterangan {
 	display: flex;
 	flex-direction: wrap;
-	padding: 5px;
+	padding: 3px;
 	font-size: 12px;
 	text-align: left;
 }
