@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.coim/css2?family=Quicksand:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
 
 *, html, body {
 	margin: 0;
@@ -73,6 +74,7 @@
 	border-radius: 5px;
 }
 
+/* Style untuk Judul Artikel */
 .judul {
 	order: 2;
 	flex: 1;
@@ -92,6 +94,7 @@
 	width: 500px;
 }
 
+/* Style Untuk Keterangan Author dan Waktu */
 .keterangan {
 	display: flex;
 	flex-direction: wrap;
@@ -114,12 +117,14 @@
 	margin-right: 6px;
 }
 
+/* Untuk style content */
 .content {
 	display: flex;
 	flex-direction: column;
 	width: 700px;
 	justify-content: center;
 	margin: 35px auto;
+	margin-top: 10px;
 }
 
 .isi {
@@ -127,6 +132,40 @@
 	margin-bottom: 10px;
 }
 
+/* Style untuk Note */
+.note {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.note p {
+	font-weight: bold;
+	padding: 10px;
+	border-left: 3px solid black;
+}
+
+/* Untuk Style Source Code */
+.code{
+	display: flex;;
+	margin: 0 auto;
+	width: 700px;
+	overflow: scroll;
+}
+
+.code pre {
+	flex: 1;
+	text-align: left;
+	background-color: #F0F0F0;
+	color: black;
+	margin: 0;
+	font-family: 'Source Code Pro', monospace;
+	font-size: 12px;
+	padding: 10px;
+	box-sizing: border-box;
+	overflow-x: auto;
+}
+
+/* Untuk menu kembali */
 .back p a {
 	text-decoration: none;
 }
@@ -134,11 +173,11 @@
 .back p a:hover {
 	font-weight: bold;
 	transition-delay: 0.01s;
-	color: black;
 	text-decoration: none;
 }
 
 .back {
+	margin-top: 10px;
 	flex: 1;
 	text-align: center;
 }
@@ -169,6 +208,7 @@
 		display:flex;
 		flex-direction: column;
 		justify-content: center;
+		margin-bottom: 10px;
 	}
 
 	.thumbnail img {
@@ -184,15 +224,27 @@
 		width: 100%;
 	}
 
+	.note {
+		margin: 5px;
+		margin-left: 20px;
+	}
+
 	.isi {
 		padding: 10px;
-		margin: 15px;
-		boz-sizing: border-box;
+		margin: 10px;
+		margin-bottom: 5px;
+		box-sizing: border-box;
 	}
 
 	.judul {
 		font-size: 15px;
 		margin: 5px;
+	}
+
+	.code {
+		margin-top: 10px;
+		margin-bottom: 10px;
+		width: 90%;
 	}
 
 }
