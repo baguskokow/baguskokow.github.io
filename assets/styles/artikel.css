@@ -1,10 +1,12 @@
-@import url('https://fonts.googleapis.coim/css2?family=Quicksand:wght@400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300&family=Roboto:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap');
 
 *, html, body {
 	margin: 0;
 	padding: 0;
 	font-family: 'Quicksand', sans-serif;
+	font-weight: 300;
 	background-color: white;
 	box-sizing: border-box;
 }
@@ -39,6 +41,7 @@
 
 .brand h1 {
 	font-family: 'Roboto', sans-serif;
+	font-weight: 700;
 }
 
 .navigation {
@@ -81,6 +84,10 @@
 	text-align: left;
 	margin-left: 20px;
 	font-size: 20px;
+}
+
+.judul h2 {
+	font-weight: 500;
 }
 
 .thumbnail {
@@ -131,6 +138,44 @@
 	text-align: left;
 	margin-bottom: 10px;
 }
+
+/* Style untuk h4 */
+
+.isi h3 {
+	font-weight: bold;
+}
+
+/*Style untuk Image Content */
+.image {
+	text-align: center;
+	margin: 10px;
+	width: 750px;
+}
+
+.image img {
+	width: 350px;
+	text-align: center;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+/* Style untuk ordered list */
+ol li {
+	margin-left: 40px;
+	font-weight: bold;
+}
+
+ol li a {
+	font-weight: bold;
+	color: black;
+}
+
+/* Style untuk unordered list*/
+
+ul li {
+	margin-left: 40px;
+}
+
 
 /* Style untuk Note */
 .note {
@@ -230,6 +275,7 @@
 	}
 
 	.isi {
+		font-size: 13px;
 		padding: 10px;
 		margin: 10px;
 		margin-bottom: 5px;
@@ -245,6 +291,10 @@
 		margin-top: 10px;
 		margin-bottom: 10px;
 		width: 90%;
+	}
+
+	.image {
+		width: 100%;
 	}
 
 }

@@ -1,0 +1,188 @@
+<!-- Untuk menggunakan code   
+	<div class="code">
+		<pre>
+			$content
+		</pre>
+	</div> -->
+
+<!-- Untuk menggunakan note
+	<div class="note">
+		<p>$content</p>
+	</div> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bagus Koko</title>
+	<link rel="stylesheet" href="../assets/styles/artikel.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+	<div class="container-satu">
+		<nav class="wrapper">
+			<div class="brand">
+				<h1>Bagus Koko</h1>
+			</div>
+
+			<ul class="navigation">
+				<li><a href="https://github.com/baguskokow" target='_blank'><img src="../assets/images/global/github.png"></a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="card">
+		<!-- Judul, Author, Waktu, Thumbnail -->
+		<div class="container-dua">
+			<div class="judul">	
+				<h2>Cara Install Debian 11 di Flashdisk</h2>
+				<br>
+				<div class="keterangan">
+					<div class="author">
+						<p>Bagus Koko Wibawanto</p>
+					</div>
+
+					<div class="time">
+						<img src="../assets/images/global/calendar.png">
+						<p>24 Juni 2022</p>
+					</div>
+				</div>
+			</div>
+					
+			<div class="thumbnail">
+				<img src="../assets/images/01_install_deb11_flasdisk/thumbnail.jpg">
+			</div>			
+		</div>
+		
+		<div class="content">
+			<!-- Content dari Artikel -->
+			<div class="isi">
+				<p>Tutorial ini akan membahas tentang bagaimana cara menginstall Debian 11 di Flashdisk. Ini sebenarnya tugas dari sekolah tujuannya nanti Debian    nya akan digunakan untuk praktek VoIP (Voice over Internet Protocol).</p> <br>
+
+				<p>Ada beberapa yang harus disiapkan untuk menginstall Debian 11 di Flashdisk.</p> <br>
+			
+				<ol>
+					<li><a href="https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/" target="_blank">Debian 11<a></li>
+					<li><a href="https://www.virtualbox.org/" target="_blank">Virtual Box</a></li>
+					<li>Flashdisk (16 GB Rekomendasi)</li>
+				</ol> <br>
+			
+				<h3>1. Buat VM baru di Virtual Box</h3>
+			
+				<div class="image">
+					<img src="../assets/images/01_install_deb11_flasdisk/vb_1.jpg">
+				</div>
+
+				<p>Buat VM baru di Virtual Box dan berikan nama (bebas). Untuk spesifikasi VM sebagai berikut: </p> <br>
+					
+					<ul>
+						<li>Ram : 1 GB</li>
+					</ul> <br>
+
+					<p>Pada Langkah berikutnya (Hardisk) ikuti seperti ini: </p> <br>
+
+					<ul>
+						<li>Create a virtual hardisk now</li>
+						<li>Hardisk Type : VDI</li>
+						<li>Dynamical allocated</li>
+						<li>Disk : 16 GB (ini tidak akan dipakai jadi bisa bebas ukurannya).</li>
+					</ul> <br>
+
+				<h3>2. Tambahkan file ISO Debian 11</h3>
+				
+					<div class="image">
+						<img src="../assets/images/01_install_deb11_flasdisk/vb_2.jpg">
+					</div>
+
+				<h3>3. Settingan Tambahan</h3>
+			
+				<p>Pilih menu “USB” untuk memilih flashdisk yang akan digunakan untuk menginstall Debian 11.</p>
+
+				<div class="image">
+					<img src="../assets/images/01_install_deb11_flasdisk/vb_3.jpg">
+					<img src="../assets/images/01_install_deb11_flasdisk/vb_4.jpg">
+					<img src="../assets/images/01_install_deb11_flasdisk/vb_5.jpg">
+				</div>
+
+				<h3>4. Jalankan VM dan Install Debian 11</h3>
+				
+				<ul>
+					<li>BIOS : Install</li>
+					<li>Language : English</li>
+					<li>Region & Location : Asia - Indonesia</li>
+					<li>United State</li>
+					<li>Keyboad : American English</li>
+					<li>Hostname : master (bebas)</li>
+					<li>Domain name : -</li>
+					<li>Root Password : $rootPW</li>
+					<li>User : $userName</li>
+					<li>User Password : $userPW</li>
+					<li>Timezone : Western (Jakarta)</li>
+				</ul> <br>
+
+				<h3>5. Pembagian Partisi</h3>
+				<p>Untuk pembagian partisi pilih "manual" agar bisa bebas menetapkan ukuran. Pada menu "Partition disks" pilih yang Flashdisk.</p>
+
+					<div class="image">
+						<img src="../assets/images/01_install_deb11_flasdisk/vb_6.jpg">
+					</div>
+
+				<p>Buat partisi kosong terlebih dahulu.</p>
+
+					<div class="image">
+						<img src="../assets/images/01_install_deb11_flasdisk/vb_7.jpg">
+					</div>
+
+				<p>Untuk Pembagian Partisi bisa bebas atau bisa ikuti seperti ini:</p>
+
+				<ul>
+					<li>Root (/) : 10 GB</li>
+					<li>Home (/home) : 6 GB</li>
+				</ul>
+
+					<div class="image">
+						<img src="../assets/images/01_install_deb11_flasdisk/vb_8.jpg">
+					</div>
+
+				<h3>6. Langkah Lanjutan</h3>
+				<p>Ikuti langkah lanjutan seperti ini: </p>
+
+				<ul>
+					<li>Scan Installation Media : No</li>
+					<li>Network Mirror : No</li>
+					<li>Desktop Environment : xfce (bisa selain xfce)</li>
+				</ul> <br>
+
+				<p>Pada saat install bootloader pilih yang Flashdisk.</p>
+
+					<div class="image">
+						<img src="../assets/images/01_install_deb11_flasdisk/vb_9.jpg">
+					</div>
+
+				<p>Jika sudah selesai, Shutdown VMnya lalu restart Laptop/Komputer dan masuk ke mode BIOS.</p>
+				
+					<div class="image">
+						<img src="../assets/images/01_install_deb11_flasdisk/vb_10.jpg">
+						<img src="../assets/images/01_install_deb11_flasdisk/vb_11.jpg">
+						<img src="../assets/images/01_install_deb11_flasdisk/vb_12.jpg">
+					</div>
+
+				<p>Debian 11 selesai diinstall. Untuk kembali ke OS Utama tinggal kembalikan boot menu ke OS utama.</p>
+
+			</div>
+			
+			<!-- Akhir class isi -->
+			
+			<div class="back">
+				<p><a href="../index.html">&laquo; Back</a></p>
+			</div>
+
+
+		</div>
+	</div>
+
+</body>
+
+</html>
