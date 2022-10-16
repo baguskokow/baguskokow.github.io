@@ -121,7 +121,7 @@
 .content {
 	display: flex;
 	flex-direction: column;
-	width: 700px;
+	width: 750px;
 	justify-content: center;
 	margin: 35px auto;
 	margin-top: 10px;
@@ -148,7 +148,7 @@
 .code{
 	display: flex;;
 	margin: 0 auto;
-	width: 700px;
+	width: 750px;
 	overflow: scroll;
 }
 
