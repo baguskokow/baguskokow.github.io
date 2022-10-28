@@ -8,6 +8,10 @@
 	box-sizing: border-box;
 }
 
+p {
+	line-height: 1.5;
+}
+
 .container-satu {
 	min-width: 100%;
 	display: flex;
@@ -111,11 +115,11 @@
 /* Urutan Content*/
 
 .urut_1 {
-	order: 1;
+	order: 2;
 }
 
 .urut_2 {
-	order: 2;
+	order: 1;
 }
 
 .urut_3 {

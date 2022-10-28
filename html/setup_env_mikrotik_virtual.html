@@ -1,0 +1,263 @@
+<!-- Untuk menggunakan code   
+	<div class="code">
+		<pre>
+			$content
+		</pre>
+	</div> -->
+
+<!-- Untuk menggunakan note
+	<div class="note">
+		<p>$content</p>
+	</div> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bagus Koko</title>
+	<link rel="stylesheet" href="../assets/styles/artikel.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+	<div class="container-satu">
+		<nav class="wrapper">
+			<div class="brand">
+				<h1>Bagus Koko</h1>
+			</div>
+
+			<ul class="navigation">
+				<li><a href="https://github.com/baguskokow" target='_blank'><img src="../assets/images/global/github.png"></a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="card">
+		<!-- Judul, Author, Waktu, Thumbnail -->
+		<div class="container-dua">
+			<div class="judul">	
+				<h2>Setup Environment Mikrotik Virtual</h2>
+				<br>
+				<div class="keterangan">
+					<div class="author">
+						<p>Bagus Koko Wibawanto</p>
+					</div>
+
+					<div class="time">
+						<img src="../assets/images/global/calendar.png">
+						<p>25 Oktober 2022</p>
+					</div>
+				</div>
+			</div>
+					
+			<div class="thumbnail">
+				<img src="../assets/images/02_setup_env_mikrotik_virtual/thumbnail.png">
+			</div>			
+		</div>
+		
+		<div class="content">
+			<!-- Content dari Artikel -->
+			<div class="isi">
+				<p>Tutorial ini akan menjelaskan cara setup environment Mikrotik Virtual sebagai pengganti jika tidak punya Routerboard. <i>"Seperti saya contohnya kalau mau praktek mikrotik sendiri di sekolah labnya keburu dikunci."</i> Jadi untuk mikrotik virtual ini kita hanya memakai routerOS nya.</p> <br>
+
+				<p>Untuk Topology kira kira seperti ini.</p>
+
+				<div class="image">
+					<img src="../assets/images/02_setup_env_mikrotik_virtual/topology.jpg">
+				</div>
+
+				<p>Jadi kita akan mengonfigurasi mikrotik lewat "Host Only". Untuk "NAT" nya akan digunakan sebagai Internet, dan untuk "Internal Network" akan digunakan untuk menghubungkan router ke clientnya.</p> <br>
+
+				<p>Yang kita butuhkan adalah</p> <br>
+
+				<ol>
+					<li><a href="https://mikrotik.com/download" target="_blank">Router OS CHR</a></li>
+					<li>Winbox (Linux pakai Repo Snap)</li>
+					<li><a href="https://www.virtualbox.org/" target="_blank">Virtual Box</a></li>
+					<li>Windows XP (bebas)</li>
+				</ol> <br>
+
+				<p>Kita akan langsung ke langkah berikutnya setelah yang apa yang kita butuhkan sudah siap.</p> <br>
+
+				<h3>1. Buat VM di Virtual Box</h3> <br>
+
+				<p>Yang pertama kita harus membuat VM untuk Windows (Client) dan RouterOS. Untuk bagaimana caranya membuat VM di Virtual Box bisa dilihat di artikel <a href="install_deb_11_flasdisk.html" target="_blank">ini</a> pada langkah nomor 1 dan 2.</p> <br>
+
+				<h3>2. Setting Network VM</h3> <br>
+
+				<h4>- Router OS</h4><br>
+				
+				<p>Untuk settingan network pada Router OS seperti ini.</p>
+
+				<div class="image">
+					<img src="../assets/images/02_setup_env_mikrotik_virtual/network_router_1.png">
+					<img src="../assets/images/02_setup_env_mikrotik_virtual/network_router_2.png">
+					<img src="../assets/images/02_setup_env_mikrotik_virtual/network_router_3.png">
+				</div>
+
+				<ul>
+					<li>vboxnet0 = 10.10.10.1/24</li>
+				</ul> <br>
+
+				<h4>- Windows (Client)</h4> <br>
+
+				<p>Untuk settingan network pada Windows seperti ini.</p>
+
+				<div class="image">
+					<img src="../assets/images/02_setup_env_mikrotik_virtual/network_windows.png">
+				</div>
+
+				<h3>3. Install Mikrotik</h3> <br>
+			
+				<p>Sekarang kita akan melakukan instalasi Mikrotik. Setelah langkah pengaturan network, jalankan VM Mikrotiknya dan lakukan install seperti ini (Pastikan sudah memasukan iso mikrotik pada langkah nomor 1).</p> <br>
+
+				<ul>
+					<li>Tekan huruf "a" untuk memilih semua</li>
+
+					<div class="image">
+						<img src="../assets/images/02_setup_env_mikrotik_virtual/install_mikrotik_2.png">
+					</div>
+
+					<li>Tekan huruf "i" lalu ikuti seperti pada gambar.</li>
+
+					<div class="image">
+						<img src="../assets/images/02_setup_env_mikrotik_virtual/install_mikrotik_3.png">
+					</div>
+
+					<li>Sebelum reboot, lepaskan iso mikrotiknya. Jika tidak nanti akan kembali ke proses penginstallan.</li>
+
+					<div class="image">
+						<img src="../assets/images/02_setup_env_mikrotik_virtual/install_mikrotik_4.png">
+					</div>
+
+					<li>Install Mikrotik sudah selesai.</li>
+
+					<div class="image">
+						<img src="../assets/images/02_setup_env_mikrotik_virtual/install_mikrotik_5.png">
+					</div>
+				</ul>
+
+				<div class="code">
+					<pre># Default Login Mikrotik
+
+username : admin
+password :
+					</pre>
+				</div>
+
+				<div class="note">
+					<p>Untuk install Windows bisa cari di Youtube ya... </p>
+				</div> <br>
+
+				<h3>4. Testing Praktek DHCP Server</h3> <br>
+				
+				<p>Setelah semua setup selesai, waktunya untuk praktek. Oke sekarang nyalakan VM Mikrotik dan Windows. Setelah semua sudah berjalan, Sekarang buka Winbox untuk mengonfigurasi Mikrotiknya.</p> <br>
+
+				<p>Untuk login ke Mikrotiknya pakai Address Host Only.</p>
+
+				<div class="image">
+					<img src="../assets/images/02_setup_env_mikrotik_virtual/winbox_1.png">
+				</div>
+
+				<div class="image">
+					<img src="../assets/images/02_setup_env_mikrotik_virtual/winbox_2.png">
+				</div>
+
+				<p>Edit nama ethernet terlebih dahulu agar tidak bingung nantinya ketika melakukan konfigurasi.</p> <br>
+
+				<ul>
+					<li>Ethernet 1 = ether 1 - Internet</li>
+					<li>Ethernet 2 = ether 2 - For Client</li>
+					<li>Ethernet 3 = ether 3 - Host Only</li>
+				</ul>
+				
+				<div class="image">
+					<img src="../assets/images/02_setup_env_mikrotik_virtual/winbox_3.png">
+				</div>
+
+				<p>Untuk nama ethernet tidak harus menggunakan nama seperti di atas.</p> <br>
+
+				<p>Setting IP Address terlebih dahulu untuk Ethernet-2</p> <br>
+			
+				<div class="code">
+					<pre>
+# Menu Konfigurasi - IP Address
+
+IP > Addresses > "ether2 - For Client"
+
+Address	  : 192.168.10.1/24
+Network   : 192.168.10.0
+Interface : Ether2 - For Client
+					</pre>
+				</div> <br>
+
+				<div class="image">
+					<img src="../assets/images/02_setup_env_mikrotik_virtual/ipaddress.png">
+				</div>
+		
+				<p>Sekarang buat DHCP servicenya. Untuk membuat service DHCP server ikuti seperti ini.</p> <br>
+
+				<div class="code">
+					<pre>
+# Menu Konfigurasi - DHCP Server
+
+IP > DHCP Server > DHCP Setup> "ether2 - For Client"
+
+DHCP Address Space       : 192.168.10.0/24
+Gateway for DHCP Network : 192.168.10.1
+Address to Give Out      : 192.168.10.2-192.168.10.254
+DNS Server               : 192.168.1.1
+                           8.8.8.8
+Lease Time               : 00:10:00
+					</pre>
+				</div>
+
+				<div class="image">
+					<img src="../assets/images/02_setup_env_mikrotik_virtual/dhcp_server.png">
+				</div>
+
+				<p>Setting Firewall di Mikrotik.</p> <br>
+
+				<div class="code">
+					<pre>
+# Menu Konfigurasi - Firewall
+
+IP > Firewall > NAT
+
+Chain          : srcnat
+Out. Interface : ether1 - Internet
+Action         : masquerade
+					</pre>
+				</div> <br>
+
+				<p>Sekarang cek di Windows Client apakah sudah mendapatkan IP dari service DHCP dari Mikrotik. Untuk settingan network di Windows diarahkan agar mendapatkan IP Otomatis</p>
+
+				<div class="image">
+					<img src="../assets/images/02_setup_env_mikrotik_virtual/windows_1.png">
+				</div>
+
+				<p>Cek IP & Ping</p>
+
+				<div class="image">
+					<img src="../assets/images/02_setup_env_mikrotik_virtual/windows_3.png">
+					<img src="../assets/images/02_setup_env_mikrotik_virtual/windows_2.png">
+				</div>
+
+			<p>Untuk cara setup environment Mikrotik Virtual kira kira seperti itu. Ini sangat berguna untuk belajar ketika tidak punya Routerboard. Kamu bisa menggunakan ini untuk keperluan Mikrotik lain. Tetapi pasti ada banyak yang tidak bisa dilakukan di Mikrotik Virtual dari pada di Routerboard.</p>
+
+			</div>
+			
+			<!-- Akhir class isi -->
+			
+			<div class="back">
+				<p><a href="../index.html">&laquo; Back</a></p>
+			</div>
+
+
+		</div>
+	</div>
+
+</body>
+
+</html>
