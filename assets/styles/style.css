@@ -115,26 +115,30 @@ p {
 /* Urutan Content*/
 
 .urut_1 {
-	order: 6;
+	order: 7;
 }
 
 .urut_2 {
-	order: 5;
+	order: 6;
 }
 
 .urut_3 {
-	order: 4;
+	order: 5;
 }
 
 .urut_4 {
-	order: 3;
+	order: 4;
 }
 
 .urut_5 {
-	order: 2;
+	order: 3;
 }
 
 .urut_6 {
+	order: 2;
+}
+
+.urut_7 {
 	order: 1;
 }
 

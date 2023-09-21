@@ -1,0 +1,193 @@
+<!-- Untuk menggunakan code   
+	<div class="code">
+		<pre>
+			$content
+		</pre>
+	</div> -->
+
+<!-- Untuk menggunakan note
+	<div class="note">
+		<p>$content</p>
+	</div> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bagus Koko</title>
+	<link rel="stylesheet" href="../assets/styles/designsystem.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	<meta charset="UTF-8">
+</head>
+
+<body>
+	<div class="container-satu">
+		<nav class="wrapper">
+			<div class="brand">
+				<h1>Bagus Koko</h1>
+			</div>
+
+			<ul class="navigation">
+				<li><a href="https://github.com/baguskokow" target='_blank'><img src="../assets/images/global/github.png"></a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="card">
+		<!-- Judul, Author, Waktu, Thumbnail -->
+		<div class="container-dua">
+			<div class="judul">	
+				<h2>char[] vs char * di C++</h2>
+				<br>
+				<div class="keterangan">
+					<div class="author">
+						<p>Bagus Koko Wibawanto</p>
+					</div>
+
+					<div class="time">
+						<img src="../assets/images/global/calendar.png">
+						<p>22 September 2023</p>
+					</div>
+				</div>
+			</div>
+					
+			<div class="thumbnail">
+				<img src="../assets/images/07_charpointer/thumbnail.png">
+			</div>			
+		</div>
+		
+		<div class="content">
+			<!-- Content dari Artikel -->
+			<div class="isi">
+				<p>Pointer sederhananya adalah sebuah variable yang menyimpan alamat memory dari suatu variable lain. Tetapi ada yang unik dari pointer ini. Jadi ketika saya belajar pointer dengan tipe data yang ada di C++ (integer, float) tidak ada masalah kecuali tipe data char. Unik karena cara kerjanya beda dari tipe data seperti interger, float. </p>
+				<br>
+				
+				<p>Kita bahas dulu aja dari mulai awal pointer.</p>
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/07_charpointer/draw1.png">
+				</div>
+	
+				<p>Seperti pada gambar di atas, ketika kita ingin membuat pointer, maka kita harus menggunakan tanda bintang (*) lalu diikuti nama variable pointernya. Tanda and (&) ini digunakan untuk mengakses memory dari variable "age". Jadi variable "agePtr" menyimpan memory dari variable "age".</p>
+
+				<br>
+	
+				<p>Bagaimana ketika kita ingin mengakses nilai variable "age" dengan menggunakan variable pointer "agePtr"?</p>
+
+				<br>
+
+				<p>Untuk mengakses nilai dari dengan menggunakan variable pointer adalah dengan menggunakan tanda bintang (*) lagi ketika melakukan print. Contohnya seperti di bawah ini..</p>
+
+				<div class="image">
+					<img src="../assets/images/07_charpointer/image-1.png">
+				</div>
+	
+				<p>Ini sama ketika tipe datanya floating juga. Tetapi ada sedikit unik dengan tipe data char.</p>
+				
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/07_charpointer/image-2.png">
+				</div>
+
+				<p>Lihat guyss, error. Padahal ketika kita menerapkan pointer di tipe data integer ini tidak ada error. Tapi ketika digunakan di tipe data char kenapa bisa error?</p>
+
+				<br>
+
+				<div class="image">
+					<video src="../assets/images/07_charpointer/animation.gif.mp4" autoplay loop></video>
+				</div>
+				
+				<br>
+
+				<p>Sekarang kita akan coba hapus tanda and (&) pada value dari variable firstNamePtr.</p>
+
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/07_charpointer/image-3.png">
+				</div>
+
+				<br>
+
+				<p>Code di atas tidak ada error. Tapi kenapa variable "firstNamePtr tidak menggunakan tanda and (&)?</p> 
+
+				<br>
+
+				<p>Variable "firstName" di atas adalah sebuah string, string itu adalah kumpulan dari character. Dari hasil baca baca dari internet, variable char yang kita define di sebuah pointer, sebenarnya dia sudah menyimpan alamat memory dari character pertama tanpa kita harus menggunakan tanda and (&). </p>
+
+				<div class="image">
+					<img src="../assets/images/07_charpointer/image-4.png">
+				</div>
+				<br>
+
+				<p>Ketika saya mencoba melakukan print alamat memory dengan menggunakan looping, output dari code tersebut adalah seperti ini.</p>
+
+				<div class="image">
+					<img src="../assets/images/07_charpointer/image-5.png">
+				</div>
+
+				<br>
+
+				<p>Jadi dia tuh ketika kita define pointer yang mengarah ke sebuah character array, dia sudah menyimpan alamat memory character pertama. Nah di C++ itu akan melakukan print sampai loopingnya itu mencapai karakter terakhir yaitu "\0". Makanya ketika kita print biasa 1x maka akan print semua character.</p>.
+
+				<br>
+
+				<p>Okee, sekarang kita akan bahas tentang perbedaan char[] & char * .</p>
+
+				<br>
+
+				<p>char[] (Character Array) sederhananya adalah array dari tipe data char untuk menyimpan character character sehingga membentuk string. char[] ini value tiap index bisa kita ganti atau sederhananya char[] ini support read & write.</p>
+
+				<div class="image">
+					<img src="../assets/images/07_charpointer/image-6.png">
+				</div>
+
+				<p>Pada gambar di atas value dari index ke 0 diganti nilainya menjadi karakter 'D'.</p>
+
+				<br>
+
+				<p>char * adalah pointer to character yang menunjuk character pertama dalam character array. char * ini value tiap index tidak bisa di ganti atau read only. </p>
+
+				<div class="image">
+					<img src="../assets/images/07_charpointer/image-7.png">
+				</div>
+
+				<p>Referensi dari sini.</p>
+
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/07_charpointer/image-8.png">
+				</div>
+
+				<div class="code">
+					<pre>
+Example:                       Allocation Type:     Read/Write:    Storage Location:   Memory Used (Bytes):
+===========================================================================================================
+const char* str = "Stack";     Static               Read-only      Code segment        6 (5 chars plus '\0')
+char* str = "Stack";           Static               Read-only      Code segment        6 (5 chars plus '\0')
+char* str = malloc(...);       Dynamic              Read-write     Heap                Amount passed to malloc
+char str[] = "Stack";          Static               Read-write     Stack               6 (5 chars plus '\0')
+char strGlobal[10] = "Global"; Static               Read-write     Data Segment (R/W)  10
+					</pre>
+				</div>
+				<br>
+
+				<p>Dah ges segitu aja :)</p>
+
+			<!-- Akhir class isi -->
+			
+			<div class="back">
+				<p><a href="../index.html">&laquo; Back</a></p>
+			</div>
+
+
+		</div>
+	</div>
+
+</body>
+
+</html>
