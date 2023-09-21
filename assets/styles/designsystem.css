@@ -317,6 +317,10 @@ ul li {
 		width : 100%;
 	}
 
+	.image video {
+		width : 90%;
+	}
+
 	.image_sedang img {
 		width : 100%;
 	}
