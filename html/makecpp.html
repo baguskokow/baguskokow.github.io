@@ -1,0 +1,288 @@
+<!-- Untuk menggunakan code   
+	<div class="code">
+		<pre>
+			$content
+		</pre>
+	</div> -->
+
+<!-- Untuk menggunakan note
+	<div class="note">
+		<p>$content</p>
+	</div> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bagus Koko</title>
+	<link rel="stylesheet" href="../assets/styles/designsystem.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	<meta charset="UTF-8">
+</head>
+
+<body>
+	<div class="container-satu">
+		<nav class="wrapper">
+			<div class="brand">
+				<h1>Bagus Koko</h1>
+			</div>
+
+			<ul class="navigation">
+				<li><a href="https://github.com/baguskokow" target='_blank'><img src="../assets/images/global/github.png"></a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="card">
+		<!-- Judul, Author, Waktu, Thumbnail -->
+		<div class="container-dua">
+			<div class="judul">	
+				<h2>Manage Project C++ dengan Make</h2>
+				<br>
+				<div class="keterangan">
+					<div class="author">
+						<p>Bagus Koko Wibawanto</p>
+					</div>
+
+					<div class="time">
+						<img src="../assets/images/global/calendar.png">
+						<p>14 Desember 2023</p>
+					</div>
+				</div>
+			</div>
+					
+			<div class="thumbnail">
+				<img src="../assets/images/10_make_cpp/thumbnail.png">
+			</div>			
+		</div>
+		
+		<div class="content">
+			<!-- Content dari Artikel -->
+			<div class="isi">
+				<p>Ketika kita membuat sebuah project di C++ dengan menggunakan paradigma OOP (Oject Oriented Programming) biasanya kita tidak akan menulis semua code di dalam 1 file saja, melainkan kita akan memecahnya agar ketika proses development tidak ribet. Tetapi proses development dengan menggunakan file terpisah itu juga akan menambah sedikit kerumitan saat proses compile.</p>
+				<br>
+
+				<p>Kenapa bisa membuat ribet?</p> 
+				<br>
+
+				<p>Mungkin sebelum memberikan alasan kenapa bisa membuat ribet, kita bahas dulu proses sederhana bagaimana dari code C++ menjadi sebuah executable file.</</p>
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/10_make_cpp/image2.png">
+				</div>
+
+				<p>Dimulai dengan sebuah file code, dimana di dalam source code tersebut pasti kita akan menuliskan #include <...>. Ini artinya kita menambahkan header file dan semua di C++ yang di awali dengan tanda "#" itu akan melewati proses preprocessing directive, Sederhananya kita akan meng-copy semua isi dari header file yang kita include.</p>
+				<br>
+
+				<p>Setelah proses preprocessing, selanjutnya compiler akan melakukan proses compiling dan menghasilkan file object. Kemudian proses terakhir adalah Linking yaitu menggabungkan file object. </p>
+				<br>
+
+				</p>Nah ketika kita menggunakan OOP kita akan sedikit ribet di bagian proses Linking, karena harus menggabungkan semua file object. File file object ini terpisah karena dalam paradigma OOP orang orang seringnya akan menuliskan code terpisah, tujuannya agar lebih terstruktur.</p>
+				<br>
+
+				<p>Saya akan memberikan contoh project kalkulator dimana menggunakan paradigma OOP. Berikut struktur projectnya.</p>
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/10_make_cpp/image1.png">
+				</div>
+
+				<p>File include/calculator.hpp</p>
+				<br>
+
+				<div class="code">
+					<pre>
+#ifndef __CALCULATOR
+#define __CALCULATOR
+
+class Calculator {
+        private:
+                int FirstNumber;
+                int SecondNumber;
+                char* Operation;
+        public:
+                Calculator(int, char*, int);
+                int penjumlahan();
+                int pengurangan();
+                int perkalian();
+                int pembagian();
+                void result();
+
+
+};
+
+#endif
+					</pre>
+				</div>
+				<br>
+
+				<p>File src/calculator.cpp</p>
+				<br>
+
+				<div class="code">
+					<pre>
+#include &ltiostream&gt
+#include &ltcstring&gt
+#include "../include/calculator.hpp"
+
+Calculator::Calculator(int firstNumber, char* operation, int secondNumber) {
+        this-&gtFirstNumber = firstNumber;
+        this-&gtOperation = operation;
+        this-&gtSecondNumber = secondNumber;
+}
+
+void Calculator::result() {
+        if(strcmp(this-&gtOperation, "+") == 0) {
+                std::cout &lt&lt "Hasil = " &lt&lt penjumlahan() &lt&lt "\n";
+        } else if(strcmp(this-&gtOperation, "-") == 0) {
+                std::cout &lt&lt "Hasil = " &lt&lt pengurangan() &lt&lt "\n";
+        } else if(strcmp(this-&gtOperation, ":") == 0) {
+                std::cout &lt&lt "Hasil = " &lt&lt pembagian() &lt&lt "\n";
+        } else if(strcmp(this-&gtOperation, "x") == 0) {
+                std::cout &lt&lt "Hasil = " &lt&lt perkalian() &lt&lt "\n";
+        } else {
+                std::cout &lt&lt "Error!\n";
+        }
+}
+						</pre>
+				</div>
+				<br>
+
+				<p>File include/operations.cpp</p>
+				<br>
+
+				<div class="code">
+					<pre>
+#include &ltiostream&gt
+#include "../include/calculator.hpp"
+
+int Calculator::penjumlahan() {
+        return this-&gtFirstNumber + this-&gtSecondNumber;
+}
+
+int Calculator::pengurangan() {
+        return this-&gtFirstNumber - this-&gtSecondNumber;
+}
+
+int Calculator::perkalian() {
+        return this-&gtFirstNumber * this-&gtSecondNumber;
+}
+
+int Calculator::pembagian() {
+        return this-&gtFirstNumber / this-&gtSecondNumber;
+}
+					</pre>
+				</div>
+				<br>
+				
+				<p>File include/main.cpp</p>
+				<br>
+
+				<div class="code">
+					<pre>
+#include &ltiostream&gt
+#include "../include/calculator.hpp"
+
+int main(int argc, char* argv[]) {
+        int firstNumber = std::stoi(argv[1]);
+        int secondNumber = std::stoi(argv[3]);
+        char* operation = argv[2];
+
+        Calculator* calculator = new Calculator(firstNumber, operation, secondNumber);
+        calculator-&gtresult();
+
+        return 0;
+}
+
+					</pre>
+				</div>
+				<br>
+				
+				<p>Untuk mengcompilenya sebenarnya kita bisa menggunakan command</p>
+				<br>
+
+				<div class="code">
+					<pre>
+g++ -std=c++17 main.cpp calculator.cpp operations.cpp -o calc
+					</pre>
+				</div>
+				<br>
+
+				<p>Jika untuk project kecil mungkin cara ini masih bisa, tetapi bagaimana jika untuk projet besar? Tentu ini akan ribet untuk memanage file file code C++.</p>
+				<br>
+
+				<p>Make hadir untuk mengatasi masalah ini. Sederhananya Make itu tool untuk automasi compile. Dengan menggunakan Make, project kita akan termanage dengan baik. Oke saya akan contohkan proses compile dengan menggunakan Make.</p>
+				<br>
+
+				<p>File Makefile</p>
+				<br>
+
+				<div class="code">
+					<pre>
+CXX := g++
+CXX_FLAGS := -std=c++17
+OBJECT := build/objects
+BIN := build/bin
+
+all: build main.o calculator.o operations.o
+        $(CXX) $(CXX_FLAGS) $(OBJECT)/main.o $(OBJECT)/calculator.o $(OBJECT)/operations.o  -o $(BIN)/calc
+
+build:
+        if [ ! -d build/objects ] && [ ! -d build/bin ]; then \
+                mkdir -p build/objects; \
+                mkdir -p build/bin; \
+        fi 
+
+main.o:
+        $(CXX) -c src/main.cpp $(CXX_FLAGS) -o $(OBJECT)/main.o
+
+calculator.o:
+        $(CXX) -c src/calculator.cpp $(CXX_FLAGS) -o $(OBJECT)/calculator.o
+
+operations.o:
+        $(CXX) -c src/operations.cpp $(CXX_FLAGS) -o $(OBJECT)/operations.o
+
+clean:
+        @echo "Clearing..."
+        @rm -rf build
+					</pre>
+				</div>
+				<br>
+	
+			<p>Untuk Compile kita kita tinggal menjalankan command "make".</p>
+
+			<div class="image">
+				<img src="../assets/images/10_make_cpp/image3.png">
+				<img src="../assets/images/10_make_cpp/image4.png">
+			</div>
+
+			<p>Kita test simple calculator.</p>
+
+			<div class="image">
+				<img src="../assets/images/10_make_cpp/image5.png">
+			</div>
+
+			<p>Jika kita ingin membersihkan hasil compile, kita tinggal menjalankan command "make clean" & otomatis semua hasil compile akan terhapus.</p>
+
+			<div class="image">
+				<img src="../assets/images/10_make_cpp/image6.png">
+			</div>
+
+			<p>Jadi itu sedikit pengenalan tentang Make. Di article ini saya tidak membahas cara menulis Makefile, tetapi lebih ke pengenalan Make itu sendiri, karena yang saya rasakan adalah lebih mudah untuk memanage project C++ dengan menggunakan Make ini. Dan jika teman teman mau mencoba menggunakan Make di project C++, teman teman bisa cari tutorial di internet tentang Make.</p>
+
+
+			<!-- Akhir class isi -->
+			
+			<div class="back">
+				<p><a href="../index.html">&laquo; Back</a></p>
+			</div>
+
+
+		</div>
+	</div>
+
+</body>
+
+</html>
