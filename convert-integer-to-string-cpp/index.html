@@ -1,0 +1,104 @@
+<!-- Untuk menggunakan code   
+	<div class="code">
+		<pre>
+			$content
+		</pre>
+	</div> -->
+
+<!-- Untuk menggunakan note
+	<div class="note">
+		<p>$content</p>
+	</div> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bagus Koko</title>
+	<link rel="stylesheet" href="../assets/styles/designsystem.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	<meta charset="UTF-8">
+	<meta property="og:title" content="Convert Integer to String in C++" />
+	<meta property="og:description" content="Sometimes we need convert from one data type to anothers. I once get a case where a function parameter use the integer type, but in another function only use string type. The question is how I change from integer to string?. Actually I have experienced the same case but with a different data type. But in this article I wanna discuss how to convert from integer to string. So let's discuss." />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="../assets/images/08_int_to_string/thumbnail.jpg" />
+	<meta property="og:url" content="https://baguskokow.github.io/convert-integer-to-string-cpp" />
+</head>
+
+<body>
+	<div class="container-satu">
+		<nav class="wrapper">
+			<div class="brand">
+				<h1>Bagus Koko</h1>
+			</div>
+
+			<ul class="navigation">
+				<li><a href="https://github.com/baguskokow" target='_blank'><img src="../assets/images/global/github.png"></a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="card">
+		<!-- Judul, Author, Waktu, Thumbnail -->
+		<div class="container-dua">
+			<div class="judul">	
+				<h2>Convert Integer to String C++</h2>
+				<br>
+				<div class="keterangan">
+					<div class="author">
+						<p>Bagus Koko Wibawanto</p>
+					</div>
+
+					<div class="time">
+						<img src="../assets/images/global/calendar.png">
+						<p>December 3, 2023</p>
+					</div>
+				</div>
+			</div>
+					
+			<div class="thumbnail">
+				<img src="../assets/images/08_int_to_string/thumbnail.jpg">
+			</div>			
+		</div>
+		
+		<div class="content">
+			<!-- Content dari Artikel -->
+			<div class="isi">
+				<p>Sometimes we need convert from one data type to anothers. I once get a case where a function parameter use the integer type, but in another function only use string type. The question is how I change from integer to string?. Actually I have experienced the same case but with a different data type. But in this article I wanna discuss how to convert from integer to string. So let's discuss.</p>
+				<br>
+			
+				<p>Look at the code below.</p>
+
+				<div class="image">
+					<img src="../assets/images/08_int_to_string/image1.png">
+				</div>
+	
+				<p>The code will show the output 20, because fellow integers can perform math operations.</p> <br>
+				
+				<p>We will use a function in the standar library to convert from integer to string. The function is "to_string()". Let's look at the next code.</p>
+				
+				<div class="image">
+					<img src="../assets/images/08_int_to_string/image2.png">
+				</div>
+
+				<p>We get an error because score variable is not of integer type, but of string type after we use the "to_string()" function. We can't perform math operations with different data type.</p>
+
+				<br>
+
+				<p>That's all guys :)</p>
+
+
+			<!-- Akhir class isi -->
+			
+			<div class="back">
+				<p><a href="../index.html">&laquo; Back</a></p>
+			</div>
+
+
+		</div>
+	</div>
+
+</body>
+
+</html>

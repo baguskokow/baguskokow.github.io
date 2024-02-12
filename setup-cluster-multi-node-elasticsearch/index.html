@@ -1,0 +1,556 @@
+<!-- Untuk menggunakan code   
+	<div class="code">
+		<pre>
+			$content
+		</pre>
+	</div> -->
+
+<!-- Untuk menggunakan note
+	<div class="note">
+		<p>$content</p>
+	</div> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bagus Koko</title>
+	<link rel="stylesheet" href="../assets/styles/artikel.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	<meta property="og:title" content="Setup Cluster Multi Node Elasticsearch" />
+	<meta property="og:description" content="Saat kita menjalankan satu aplikasi Elasticsearch, sebenarnya kita juga menjalankan cluster Elasticsearch dengan satu node. Tetapi pada kenyataannya di production server kita tidak akan menginstall cluster hanya dengan satu node. Artinya lebih dari satu node dengan tujuan jika salah satu node mati, cluster masih dapat bekerja. Tutorial ini akan menjelaskan bagaimana cara setup cluster multi node di Elasticsearch." />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="../assets/images/03_clustering_multi_node_elasticsearch/thumbnail.jpg" />
+	<meta property="og:url" content="https://baguskokow.github.io/setup-cluster-multi-node-elasticsearch" />
+</head>
+
+<body>
+	<div class="container-satu">
+		<nav class="wrapper">
+			<div class="brand">
+				<h1>Bagus Koko</h1>
+			</div>
+
+			<ul class="navigation">
+				<li><a href="https://github.com/baguskokow" target='_blank'><img src="../assets/images/global/github.png"></a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="card">
+		<!-- Judul, Author, Waktu, Thumbnail -->
+		<div class="container-dua">
+			<div class="judul">	
+				<h2>Setup Cluster Multi Node Elasticsearch</h2>
+				<br>
+				<div class="keterangan">
+					<div class="author">
+						<p>Bagus Koko Wibawanto</p>
+					</div>
+
+					<div class="time">
+						<img src="../assets/images/global/calendar.png">
+						<p>22 November 2022</p>
+					</div>
+				</div>
+			</div>
+					
+			<div class="thumbnail">
+				<img src="../assets/images/03_clustering_multi_node_elasticsearch/thumbnail.jpg">
+			</div>			
+		</div>
+		
+		<div class="content">
+			<!-- Content dari Artikel -->
+			<div class="isi">
+				<p>Saat kita menjalankan satu aplikasi Elasticsearch, sebenarnya kita juga menjalankan cluster Elasticsearch dengan satu node. Tetapi pada kenyataannya di production server kita tidak akan menginstall cluster hanya dengan satu node. Artinya lebih dari satu node dengan tujuan jika salah satu node mati, cluster masih dapat bekerja. Tutorial ini akan menjelaskan bagaimana cara setup cluster multi node di Elasticsearch.</p> <br>
+
+				<p>Untuk setup clusternya kita akan gunakan 3 server. Jadi node nodenya tidak berjalan di lokal. Untuk detail server sebagai berikut.</p> <br>
+
+				<div class="code">
+					<pre>
+# Server 1
+	OS = Ubuntu 22.04.1 LTS
+	IP = 10.4.4.10
+	Node Name = node-1
+
+# Server 2
+	OS = Ubuntu 22.04.1 LTS
+	IP = 10.4.4.20
+	Node Name = node-2
+
+# Server 3
+	OS = CentOS Linux 8
+	IP = 10.4.4.30
+	Node Name = node-3
+					</pre>
+				</div>
+
+				<br>
+
+				<p>Ketiga node ini sudah terinstall Elasticsearchnya. Saya tidak akan menjelaskan bagaimana cara menginstall Elasticsearch, karena untuk menginstall bisa dilihat di dokumentasi Elasticsearch.</p> <br>
+
+				<p>Setelah Elasticsearch sudah terinstall di masing masing node, kita akan setup agar elasticsearchnya berjalan sebagai cluster. Untuk setupnya kita akan mengubah beberapa konfigurasi di file "/etc/elasticsearch/elasticsearch.yml". Ini dilakukan di semua server.</p> <br>
+
+				<div class="code">
+					<pre>
+# ======================== Elasticsearch Configuration Node 1 =========================
+#
+# NOTE: Elasticsearch comes with reasonable defaults for most settings.
+#       Before you set out to tweak and tune the configuration, make sure you
+#       understand what are you trying to accomplish and the consequences.
+#
+# The primary way of configuring a node is via this file. This template lists
+# the most important settings you may want to configure for a production cluster.
+#
+# Please consult the documentation for further information on configuration options:
+# https://www.elastic.co/guide/en/elasticsearch/reference/index.html
+#
+# ---------------------------------- Cluster -----------------------------------
+#
+# Use a descriptive name for your cluster:
+#
+cluster.name: nakama
+#
+# ------------------------------------ Node ------------------------------------
+#
+# Use a descriptive name for the node:
+#
+node.name: node-1
+#
+# Add custom attributes to the node:
+#
+#node.attr.rack: r1
+#
+# ----------------------------------- Paths ------------------------------------
+#
+# Path to directory where to store the data (separate multiple locations by comma):
+#
+path.data: /var/lib/elasticsearch
+#
+# Path to log files:
+#
+path.logs: /var/log/elasticsearch
+#
+# ----------------------------------- Memory -----------------------------------
+#
+# Lock the memory on startup:
+#
+#bootstrap.memory_lock: true
+#
+# Make sure that the heap size is set to about half the memory available
+# on the system and that the owner of the process is allowed to use this
+# limit.
+#
+# Elasticsearch performs poorly when the system is swapping the memory.
+#
+# ---------------------------------- Network -----------------------------------
+#
+# By default Elasticsearch is only accessible on localhost. Set a different
+# address here to expose this node on the network:
+#
+network.host: 10.4.4.10
+#
+# By default Elasticsearch listens for HTTP traffic on the first free port it
+# finds starting at 9200. Set a specific HTTP port here:
+#
+http.port: 9200
+#
+# For more information, consult the network module documentation.
+#
+# --------------------------------- Discovery ----------------------------------
+#
+# Pass an initial list of hosts to perform discovery when this node is started:
+# The default list of hosts is ["127.0.0.1", "[::1]"]
+#
+discovery.seed_hosts: ["10.4.4.20", "10.4.4.30"]
+#
+# Bootstrap the cluster using an initial set of master-eligible nodes:
+#
+cluster.initial_master_nodes: ["node-1"]
+#
+# For more information, consult the discovery and cluster formation module documentation.
+#
+# --------------------------------- Readiness ----------------------------------
+#
+# Enable an unauthenticated TCP readiness endpoint on localhost
+#
+#readiness.port: 9399
+#
+# ---------------------------------- Various -----------------------------------
+#
+# Allow wildcard deletion of indices:
+#
+#action.destructive_requires_name: false
+
+#----------------------- BEGIN SECURITY AUTO CONFIGURATION -----------------------
+#
+# The following settings, TLS certificates, and keys have been automatically      
+# generated to configure Elasticsearch security features on 09-11-2022 03:56:21
+#
+# --------------------------------------------------------------------------------
+
+# Enable security features
+xpack.security.enabled: false
+
+xpack.security.enrollment.enabled: true
+
+# Enable encryption for HTTP API client connections, such as Kibana, Logstash, and Agents
+xpack.security.http.ssl:
+  enabled: true
+  keystore.path: certs/http.p12
+
+# Enable encryption and mutual authentication between cluster nodes
+xpack.security.transport.ssl:
+  enabled: true
+  verification_mode: certificate
+  keystore.path: certs/transport.p12
+  truststore.path: certs/transport.p12
+# Create a new cluster with the current node only
+# Additional nodes can still join the cluster later
+# cluster.initial_master_nodes: ["pod4-baguskoko-elk"]
+
+# Allow HTTP API connections from anywhere
+# Connections are encrypted and require user authentication
+http.host: 0.0.0.0
+
+# Allow other nodes to join the cluster from anywhere
+# Connections are encrypted and mutually authenticated
+#transport.host: 0.0.0.0
+
+#----------------------- END SECURITY AUTO CONFIGURATION -------------------------
+					</pre>
+				</div>
+
+				<br>
+
+				<p>Dari konfigurasi di atas ada beberapa konfigurasi yang perlu kita pahami.</p> <br>
+
+				<p>- cluster.name: nakama</p> <br>
+
+				<p>Ini adalah nama untuk cluster yang ingin kita buat. Settingan "cluster.name" ini harus disamakan dengan server 2 dan juga server 3. Jika tidak sama nama clusternya maka tidak akan terbentuk sebuah cluster.</p> <br>
+
+				<p>- node.name: node-1</p> <br>
+
+				<p>Ini adalah nama dari nodenya. Kita bisa bebas memberi nama ke nodenya, tetapi untuk memudahkan, saya set menjadi "node-1". Dan di settingan server 2 dan server 3 juga ini diubah menjadi "node-2" dan "node-3"</p> <br>
+
+				<p>- path.data: /var/lib/elasticsearch & path.logs: /var/log/elasticsearch</p> <br>
+
+				<p>Untuk settingan path data dan path log kita defaultkan saja.</p> <br>
+
+				<p>- network.host: 10.4.4.10</p> <br>
+				
+				<p>Ini adalah IP dari server 1. Untuk settingan di server 1 dan server 2 set aja ke IP dari masing masing server. Ini artinya kita membuka IP agar node node lain Elasticsearch yang satu network bisa mengakses.</p> <br>
+
+				<p>- http.port: 9200</p> <br>
+
+				<p>Untuk settingan port kita defaultkan saja. Karena kita setupnya di server yang berbeda.</p> <br>
+
+				<p>- discovery.seed_hosts: ["10.4.4.20", "10.4.4.30"]</p> <br>
+
+				<p>Seed host ini sederhananya ketika node pertama kali nyala. node tersebut akan bertanya ke node yang memiliki IP yang kita inisialisasi di "seed.host" untuk membentuk sebuah cluster. Jadi misalkan node-1 nyala dia akan tanya ke node yang memiliki IP tersebut untuk membentuk sebuah cluster.</p> <br>
+
+				<p>- cluster.initial_master_nodes: ["node-1"]</p> <br>
+
+				<p>Ini digunakan untuk menginisialisasi node mana yang akan menjadi master saat pertama kali kebentuk cluster. Settingan ini berguna di awal saja ketika pertama kali kebentuk kluster. Jadi ketika pertama kali clusternya jalan yang akan menjadi master adalah node-1. Dan ketika node-1 mati otomatis node-2 dan node-3 akan melakukan voting ulang untuk menentukan node mana yang akan menjadi master. Jadi sebenarnya kita punya 3 node yang memenuhi syarat menjadi master (node-1, node-2, node-3) tetapi di settingan ini kita yang menentukan node mana yang akan menjadi master ketika pertama kali clusternya jalan.</p> <br>
+
+				<p>Untuk settingan node-2 dan node-3 seperti ini.</p> <br>
+
+				<div class="code">
+					<pre>
+# ======================== Elasticsearch Configuration Node 2 =========================
+#
+# NOTE: Elasticsearch comes with reasonable defaults for most settings.
+#       Before you set out to tweak and tune the configuration, make sure you
+#       understand what are you trying to accomplish and the consequences.
+#
+# The primary way of configuring a node is via this file. This template lists
+# the most important settings you may want to configure for a production cluster.
+#
+# Please consult the documentation for further information on configuration options:
+# https://www.elastic.co/guide/en/elasticsearch/reference/index.html
+#
+# ---------------------------------- Cluster -----------------------------------
+#
+# Use a descriptive name for your cluster:
+#
+cluster.name: nakama
+#
+# ------------------------------------ Node ------------------------------------
+#
+# Use a descriptive name for the node:
+#
+node.name: node-2
+#
+# Add custom attributes to the node:
+#
+#node.attr.rack: r1
+#
+# ----------------------------------- Paths ------------------------------------
+#
+# Path to directory where to store the data (separate multiple locations by comma):
+#
+path.data: /var/lib/elasticsearch
+#
+# Path to log files:
+#
+path.logs: /var/log/elasticsearch
+#
+# ----------------------------------- Memory -----------------------------------
+#
+# Lock the memory on startup:
+#
+#bootstrap.memory_lock: true
+#
+# Make sure that the heap size is set to about half the memory available
+# on the system and that the owner of the process is allowed to use this
+# limit.
+#
+# Elasticsearch performs poorly when the system is swapping the memory.
+#
+# ---------------------------------- Network -----------------------------------
+#
+# By default Elasticsearch is only accessible on localhost. Set a different
+# address here to expose this node on the network:
+#
+network.host: 10.4.4.20
+#
+# By default Elasticsearch listens for HTTP traffic on the first free port it
+# finds starting at 9200. Set a specific HTTP port here:
+#
+http.port: 9200
+#
+# For more information, consult the network module documentation.
+#
+# --------------------------------- Discovery ----------------------------------
+#
+# Pass an initial list of hosts to perform discovery when this node is started:
+# The default list of hosts is ["127.0.0.1", "[::1]"]
+#
+discovery.seed_hosts: ["10.4.4.10", "10.4.4.30"]
+#
+# Bootstrap the cluster using an initial set of master-eligible nodes:
+#
+#cluster.initial_master_nodes: []
+#
+# For more information, consult the discovery and cluster formation module documentation.
+#
+# --------------------------------- Readiness ----------------------------------
+#
+# Enable an unauthenticated TCP readiness endpoint on localhost
+#
+#readiness.port: 9399
+#
+# ---------------------------------- Various -----------------------------------
+#
+# Allow wildcard deletion of indices:
+#
+#action.destructive_requires_name: false
+
+#----------------------- BEGIN SECURITY AUTO CONFIGURATION -----------------------
+#
+# The following settings, TLS certificates, and keys have been automatically      
+# generated to configure Elasticsearch security features on 03-11-2022 03:21:15
+#
+# --------------------------------------------------------------------------------
+
+# Enable security features
+xpack.security.enabled: false
+
+xpack.security.enrollment.enabled: true
+
+# Enable encryption for HTTP API client connections, such as Kibana, Logstash, and Agents
+xpack.security.http.ssl:
+  enabled: true
+  keystore.path: certs/http.p12
+
+# Enable encryption and mutual authentication between cluster nodes
+xpack.security.transport.ssl:
+  enabled: true
+  verification_mode: certificate
+  keystore.path: certs/transport.p12
+  truststore.path: certs/transport.p12
+# Create a new cluster with the current node only
+# Additional nodes can still join the cluster later
+#cluster.initial_master_nodes: ["pod4-baguskoko-client1"]
+
+# Allow HTTP API connections from anywhere
+# Connections are encrypted and require user authentication
+http.host: 0.0.0.0
+
+# Allow other nodes to join the cluster from anywhere
+# Connections are encrypted and mutually authenticated
+#transport.host: 0.0.0.0
+
+#----------------------- END SECURITY AUTO CONFIGURATION -------------------------
+					</pre>
+				</div>
+
+				<br>
+
+				<div class="code">
+					<pre>
+# ======================== Elasticsearch Configuration Node 3 =========================
+#
+# NOTE: Elasticsearch comes with reasonable defaults for most settings.
+#       Before you set out to tweak and tune the configuration, make sure you
+#       understand what are you trying to accomplish and the consequences.
+#
+# The primary way of configuring a node is via this file. This template lists
+# the most important settings you may want to configure for a production cluster.
+#
+# Please consult the documentation for further information on configuration options:
+# https://www.elastic.co/guide/en/elasticsearch/reference/index.html
+#
+# ---------------------------------- Cluster -----------------------------------
+#
+# Use a descriptive name for your cluster:
+#
+cluster.name: nakama
+#
+# ------------------------------------ Node ------------------------------------
+#
+# Use a descriptive name for the node:
+#
+node.name: node-3
+#
+# Add custom attributes to the node:
+#
+#node.attr.rack: r1
+#
+# ----------------------------------- Paths ------------------------------------
+#
+# Path to directory where to store the data (separate multiple locations by comma):
+#
+path.data: /var/lib/elasticsearch
+#
+# Path to log files:
+#
+path.logs: /var/log/elasticsearch
+#
+# ----------------------------------- Memory -----------------------------------
+#
+# Lock the memory on startup:
+#
+#bootstrap.memory_lock: true
+#
+# Make sure that the heap size is set to about half the memory available
+# on the system and that the owner of the process is allowed to use this
+# limit.
+#
+# Elasticsearch performs poorly when the system is swapping the memory.
+#
+# ---------------------------------- Network -----------------------------------
+#
+# By default Elasticsearch is only accessible on localhost. Set a different
+# address here to expose this node on the network:
+#
+network.host: 10.4.4.30
+#
+# By default Elasticsearch listens for HTTP traffic on the first free port it
+# finds starting at 9200. Set a specific HTTP port here:
+#
+http.port: 9200
+#
+# For more information, consult the network module documentation.
+#
+# --------------------------------- Discovery ----------------------------------
+#
+# Pass an initial list of hosts to perform discovery when this node is started:
+# The default list of hosts is ["127.0.0.1", "[::1]"]
+#
+discovery.seed_hosts: ["10.4.4.10", "10.4.4.20"]
+#
+# Bootstrap the cluster using an initial set of master-eligible nodes:
+#
+#cluster.initial_master_nodes: [] 
+#
+# For more information, consult the discovery and cluster formation module documentation.
+#
+# --------------------------------- Readiness ----------------------------------
+#
+# Enable an unauthenticated TCP readiness endpoint on localhost
+#
+#readiness.port: 9399
+#
+# ---------------------------------- Various -----------------------------------
+#
+# Allow wildcard deletion of indices:
+#
+#action.destructive_requires_name: false
+
+#----------------------- BEGIN SECURITY AUTO CONFIGURATION -----------------------
+#
+# The following settings, TLS certificates, and keys have been automatically      
+# generated to configure Elasticsearch security features on 03-11-2022 03:21:15
+#
+# --------------------------------------------------------------------------------
+
+# Enable security features
+xpack.security.enabled: false
+
+xpack.security.enrollment.enabled: true
+
+# Enable encryption for HTTP API client connections, such as Kibana, Logstash, and Agents
+xpack.security.http.ssl:
+  enabled: true
+  keystore.path: certs/http.p12
+
+# Enable encryption and mutual authentication between cluster nodes
+xpack.security.transport.ssl:
+  enabled: true
+  verification_mode: certificate
+  keystore.path: certs/transport.p12
+  truststore.path: certs/transport.p12
+# Create a new cluster with the current node only
+# Additional nodes can still join the cluster later
+#cluster.initial_master_nodes: ["pod4-baguskoko-client1"]
+
+# Allow HTTP API connections from anywhere
+# Connections are encrypted and require user authentication
+http.host: 0.0.0.0
+
+# Allow other nodes to join the cluster from anywhere
+# Connections are encrypted and mutually authenticated
+#transport.host: 0.0.0.0
+
+#----------------------- END SECURITY AUTO CONFIGURATION -------------------------
+
+					</pre>
+				</div>
+
+				<br>
+
+				<p>Restart Elasticsearch di semua server. Dan coba di cek di browser atau pakai curl untuk melihat apakah cluster berhasil terbentuk atau tidak.</p> <br>
+
+				<div class="code">
+					<pre>
+curl -X GET http://10.4.4.10:9200/_cat/nodes?v
+
+ip        heap.percent ram.percent cpu load_1m load_5m load_15m node.role   master name
+10.4.4.20           38          96   0    0.00    0.01     0.00 cdfhilmrstw -      node-2
+10.4.4.30           39          96   0    0.00    0.00     0.00 cdfhilmrstw -      node-3
+10.4.4.10           46          91  79    3.51    3.43     3.39 cdfhilmrstw *      node-1
+					</pre>
+				</div>
+
+				<br>
+
+				<p>Untuk setup cluster multi node di Elasticsearch seperti itu. Sebenarnya masih banyak yang perlu kita pikirkan ketika ingin membentuk sebuah cluster yang stabil. Tetapi jika untuk belajar setup cluster seperti ini sudah cukup baik. Jika ingin lebih lengkap bisa dilihat di dokumentasi Elasticsearchnya.</p>
+	
+			</div>
+			
+			<!-- Akhir class isi -->
+			
+			<div class="back">
+				<p><a href="../index.html">&laquo; Back</a></p>
+			</div>
+
+
+		</div>
+	</div>
+
+</body>
+
+</html>

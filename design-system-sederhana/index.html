@@ -1,0 +1,110 @@
+<!-- Untuk menggunakan code   
+	<div class="code">
+		<pre>
+			$content
+		</pre>
+	</div> -->
+
+<!-- Untuk menggunakan note
+	<div class="note">
+		<p>$content</p>
+	</div> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bagus Koko</title>
+	<link rel="stylesheet" href="../assets/styles/designsystem.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	<meta property="og:title" content="Design System Sederhana" />
+	<meta property="og:description" content="Di tempat magang saya, tiap akhir magang biasanya bikin suatu project, dan waktu itu saya milih project yang ngebahas tentang salah satu search engine database, Elasticsearch. Latar belakang kenapa memlih bahas Elasticsearch itu sederhana banget, karena pengin tau gimana sih penggunaan 2 database yang berbeda secara bersamaan" />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="../assets/images/05_designsystemsederhana/thumbnail.jpg" />
+	<meta property="og:url" content="https://baguskokow.github.io/design-system-sederhana" />
+</head>
+
+<body>
+	<div class="container-satu">
+		<nav class="wrapper">
+			<div class="brand">
+				<h1>Bagus Koko</h1>
+			</div>
+
+			<ul class="navigation">
+				<li><a href="https://github.com/baguskokow" target='_blank'><img src="../assets/images/global/github.png"></a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="card">
+		<!-- Judul, Author, Waktu, Thumbnail -->
+		<div class="container-dua">
+			<div class="judul">	
+				<h2>Design System Sederhana</h2>
+				<br>
+				<div class="keterangan">
+					<div class="author">
+						<p>Bagus Koko Wibawanto</p>
+					</div>
+
+					<div class="time">
+						<img src="../assets/images/global/calendar.png">
+						<p>12 April 2023</p>
+					</div>
+				</div>
+			</div>
+					
+			<div class="thumbnail">
+				<img src="../assets/images/05_designsystemsederhana/thumbnail.jpg">
+			</div>			
+		</div>
+		
+		<div class="content">
+			<!-- Content dari Artikel -->
+			<div class="isi">
+				<p>Di tempat magang saya, tiap akhir magang biasanya bikin suatu project, dan waktu itu saya milih project yang ngebahas tentang salah satu search engine database, Elasticsearch. Latar belakang kenapa memlih bahas Elasticsearch itu sederhana banget, karena pengin tau gimana sih penggunaan 2 database yang berbeda secara bersamaan, soalnya aplikasi e-commerce itu ada fitur pencarian, dan yang saya baca dari internet, banyak yang gunain Elasticsearch ini untuk menangani fitur pencarian. Jadilah saya ngambil judul “Implementasi Elasticsearch di Server Production”.  Gokill kan? Wkwk</p>
+				<br>
+
+				<p>Yang bikin gokill aslinya pas bagian “Server Production”. Gak pernah mainan di server production padahal :) .</p>
+				<br>
+				
+				<p>Tapi ngambil judul itu karena ingin nerapin dari hasil baca baca internet. Dari project itu saya berhasil ngedesign system pertama kalinya, walaupun design systemnya juga sederhana banget.</p>
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/05_designsystemsederhana/image_1.png">
+				</div>
+
+				<p>Gimana guys, Sederhana banget kan design systemnya?</p>
+				<br>
+
+				<p>Sedikit penjelasan tentang design system yang udah saya bikin. Jadi penggunaan Elasticsearch itu biasanya ketika database utama udah kerepotan untuk nanganin pencarian data, nah baru tuh gunain Elasticsearch. Tapi gimana caranya mensikronkan data antara database utama dengan Elasticsearch ini. Karena itu saya gunain Logstash untuk mensinkronkan datanya ke Elasticsearch, jadi nantinya data dari MySQL akan selalu sama dengan data yang ada di Elasticsearch. Tetapi Logstash ini hanya bisa ngelakuin 3 operasi yaitu Create, Read, Update, tidak bisa melakukan Delete.</p>
+				<br>
+
+				<p>Waktu pas ngerjain project ini terjadilah peristiwa stuck 2 minggu, karena bingung kenapa Logstashnya gk bisa untuk melakukan operasi Delete. Nah untungnya dapet referensi dari internet, di referensi itu ngasih tau kalo mau mensinkronkan data MySQL dan Elasticsearch dengan menggunakan Logstash, itu emang gk bisa, jadi harus bikin kode sendiri buat ngehapus data di kedua databasenya. Jadi tiap tiap database harus tanggung jawab sendiri kalo mau ngehapus datanya. Karena gk bisa bikin kode kaya gituan, jadi saya makai bash script untuk ngehapus data di kedua database itu. </p>
+				<br>
+
+				<p>Elasticsearch biasanya diinstall lebih dari satu dan nanti dibikin biar jadi cluster. Cluster itu sederhananya gabungan beberapa node (Elasticsearch) dan mereka saling kerja sama. Di Elasticsearch tiap node bisa nanganin untuk mencari data. Tapi jika misalnya saya tetapin kalo mau cari data hanya lewat node-1, dan ada banyak user yang ngakses, itu pasti akan ngeberatin node-1 tersebut. Bayangin udah jadi satu cluster yang harusnya kerja sama tapi semua pencarian dilakuin oleh node-1 itu sendiri. Karena itu saya pakai load balancer dan yang saya pakai adalah Haproxy. Nantinya ketika user nyari data, itu akan lewat server load balancernya dulu dan nanti load balancer yang akan membagi tugas pencarian ke node node yang ada di dalam cluster. </p>
+				<br>
+
+				<p>Jadi jika user ingin menambah data, mengupdate data, itu akan masuk dulu ke database MySQL dan setelah itu datanya diskinkronkan ke Elasticsearch dengan bantuan Logstash. Tetapi jika ingin menghapus data maka menggunakan Bash Script. Nah proses ngehapus datanya itu saya bikin biar ngehapus data di MySQL dulu baru nanti di Elasticserach. Dengan cara ini kedua database pasti akan selalu sama datanya. Proses ngehapus data di Elasticsearch itu beda dengan di MySQL. Karena tiap node Elasticsearch selain bisa untuk mencari data, mereka juga bisa untuk menghapus data, walaupun misalkan data A kesimpen di node-1, node-2 bisa menghapus data A yang tersimpan di node-1. Karena itu pas ngehapus data di Elasticsearch harus lewat server load balancer dulu agar tidak membebankan salah satu node.</p>
+				<br>
+
+				<p>Dah segitu aja guys, btw penjelasannya gak jadi sedikit ternyata wkwk.</p>
+				<br>
+						
+			<!-- Akhir class isi -->
+			
+			<div class="back">
+				<p><a href="../index.html">&laquo; Back</a></p>
+			</div>
+
+
+		</div>
+	</div>
+
+</body>
+
+</html>

@@ -1,0 +1,178 @@
+<!-- Untuk menggunakan code   
+	<div class="code">
+		<pre>
+			$content
+		</pre>
+	</div> -->
+
+<!-- Untuk menggunakan note
+	<div class="note">
+		<p>$content</p>
+	</div> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bagus Koko</title>
+	<link rel="stylesheet" href="../assets/styles/designsystem.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	<meta charset="UTF-8">
+	<meta property="og:title" content="Algoritma Buble Sort di C++" />
+	<meta property="og:description" content="Ketika kita ingin mengurutkan nilai dari sebuah array, sebenarnya kita bisa menggunakan function sort() di C++, tapi kayaknya kurang seru kalo pake built-in function. Sebenarnya kita bisa membuat sendiri function sort() dengan menggunakan Algoritma Buble Sort. " />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="../assets/images/06_bublesort/thumbnail.jpg" />
+	<meta property="og:url" content="https://baguskokow.github.io/algoritma-buble-sort-cpp" />
+</head>
+
+<body>
+	<div class="container-satu">
+		<nav class="wrapper">
+			<div class="brand">
+				<h1>Bagus Koko</h1>
+			</div>
+
+			<ul class="navigation">
+				<li><a href="https://github.com/baguskokow" target='_blank'><img src="../assets/images/global/github.png"></a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="card">
+		<!-- Judul, Author, Waktu, Thumbnail -->
+		<div class="container-dua">
+			<div class="judul">	
+				<h2>Algoritma Buble Sort di C++</h2>
+				<br>
+				<div class="keterangan">
+					<div class="author">
+						<p>Bagus Koko Wibawanto</p>
+					</div>
+
+					<div class="time">
+						<img src="../assets/images/global/calendar.png">
+						<p>10 Agustus 2023</p>
+					</div>
+				</div>
+			</div>
+					
+			<div class="thumbnail">
+				<img src="../assets/images/06_bublesort/thumbnail.jpg">
+			</div>			
+		</div>
+		
+		<div class="content">
+			<!-- Content dari Artikel -->
+			<div class="isi">
+				<p>Ketika kita ingin mengurutkan nilai dari sebuah array, sebenarnya kita bisa menggunakan function "sort()" di C++, tapi kayaknya kurang seru kalo pake built-in function. Sebenarnya kita bisa membuat sendiri function sort() dengan menggunakan Algoritma Buble Sort. Oh iya ini saya menggunakan C++, seharusnya bisa di bahasa pemrograman yang lain, karena algoritmanya gak khusus untuk C++.</p>
+				<br>
+				
+				<p>Kita bahas dulu untuk algoritma buble sort yak...</p>
+				<br>
+
+				<p>Algoritma Buble Sort sederhananya adalah algoritma yang cara kerjanya adalah membandingkan 2 nilai dan nilai yang paling kecil akan dipindah ke paling kiri sehingga menjadi nilai yang urut.</p>
+
+				<div class="image">
+					<img src="../assets/images/06_bublesort/draw1.png">
+					<img src="../assets/images/06_bublesort/draw2.png">
+				</div>
+	
+				<p>Pada 2 gambar di atas, ada nilai "5 4 3 6 2 7" (tidak urut), dengan menggunakan algoritma buble sort ini maka nilai 5 akan dibandingkan dengan nilai 4. Nilai 4 tentu lebih kecil dari nilai 5, maka dari itu 4 akan digeser ke kiri. Dan lanjut seperti itu sampai looping yang pertama menghasilkan urutan nilai baru "4 3 5 2 6 7". Itu dilakukan terus sampai hasil terakhir menghasilkan nilai yang urut "2 3 4 5 6 7". </p>
+				<br>
+
+				<p>Kayaknya di teori harusnya cepet maksud karena algoritmanya sederhana, mendingan kita bahas sekalian juga untuk kodenya.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+#include &ltiostream&gt
+
+void bubleSort(int myarray[], int n) {
+        int temp;
+        for (int i = 0; i &lt n; i++) {
+                for (int j = 0; j &lt; n - 1; j++) {
+                        if (myarray[j] &gt myarray[j + 1]) {
+                                temp = myarray[j];
+                                myarray[j] = myarray[j + 1];
+                                myarray[j + 1] = temp;
+                        }
+                        std::cout &lt&lt myarray[j] &lt&lt " ";
+                }
+                std::cout &lt&lt "\n";
+        }
+}
+
+
+void printArray(int myarray[], int n) {
+        for (int i = 0; i &lt n; i++) {
+                std::cout &lt&lt myarray[i] << " ";
+        }
+        std::cout << "\n";
+}
+
+
+int main() {
+        int myarray[6] = {5, 4, 3, 6, 2, 7};
+        int n = sizeof(myarray) / sizeof(myarray[0]);
+
+        bubleSort(myarray, n);
+        printArray(myarray, n);
+
+        return 0;
+}
+
+					</pre>
+				</div>
+				<br>
+
+				<p>Pada kode di atas, ada 3 function yaitu bubleSort(), printArray(), dan juga main(). Function bubleSort() saya buat untuk implementasi algoritmanya, function printArray() digunakan untuk melakukan print, dan function main() adalah function utama, jadi saya akan manggil function bubleSort() dan juga printArray() di dalamnya.</p>
+				<br>
+
+				<p>Bagian function main() ada array "myarray" dengan panjang 6 dan dia manyimpan nilai yang masih belum urut "5, 4, 3, 6, 2, 7". Variable "n" punya nilai dari pembagian size array yaitu size dari "myarray (24)" dan juga "myarray[0] (4)". Jadi nilai 24 / 4 hasilnya adalah 6. Artinya variable "n" akan punya nilai 6.</p>
+
+				<div class="image">
+					<img src="../assets/images/06_bublesort/draw3.png">
+				</div>
+
+				<p>Pada function bubleSort() ada 2 looping, looping ke-1 digunakan untuk mayor looping (anggap aja seperti halaman di buku) dan looping ke-2 digunakan untuk minor looping. Jadi looping ke-1 akan dijalankan ketika kondisinya true maka akan dilanjutkan looping minor, dan nantinya jika looping minor kondisinya sudah selesai maka looping ke-1 jalan lagi. Begitu terus sampai looping mayor kondisinya udah gak terpenuhi.</p>
+
+				<div class="image">
+					<img src="../assets/images/06_bublesort/draw6.png">
+					<img src="../assets/images/06_bublesort/draw7.png">
+					<img src="../assets/images/06_bublesort/draw8.png">
+				</div>
+
+				<p>Di looping yang ke-2, saya buat kondisinya agar kurang dari (n - 1 / 6 - 1 = 5). Jadi hanya sampai kurang dari 5 ( &lt 5). Jadi nilai yang menempati index ke-5 tidak akan dibandingkan karena index ke-5 sudah paling akhir.</p>
+				<br>
+
+				<p>Di dalam looping minor ada if statement, Anggap aja ini perulangan minor dari awal (0). jadi ketika index array ke-0 lebih besar dari index array ke-1 maka nilai index array ke-0 akan disimpan sementara di variable "temp", lalu index array ke-0 akan diganti nilainya dengan nilai dari index array ke-1, dan terakhir index array ke-1 akan diganti nilainya dengan nilai dari variable temp.</p>
+
+				<div class="image">
+					<img src="../assets/images/06_bublesort/draw9.png">
+				</div>
+
+				<p>Jadi nilai 4 dan 5 saling tukar posisi index seperti pada gambar di atas.</p>
+				<br>
+
+				<p>Yang terakhir function printArray() digunakan untuk melakukan print array, jadi function ini akan ngebaca index ke-0 sampai ke-5 pakai looping. Dan ngebacanya dari array yang sudah melewati function bubleSort(). Hasil output akan seperti ini.</p>
+
+				<div class="image">
+					<img src="../assets/images/06_bublesort/sample-output.png">
+				</div>
+
+				<p>Dah ges segitu aja :)</p>
+
+			<!-- Akhir class isi -->
+			
+			<div class="back">
+				<p><a href="../index.html">&laquo; Back</a></p>
+			</div>
+
+
+		</div>
+	</div>
+
+</body>
+
+</html>

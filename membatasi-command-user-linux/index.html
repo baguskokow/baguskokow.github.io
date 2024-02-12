@@ -1,0 +1,163 @@
+<!-- Untuk menggunakan code   
+	<div class="code">
+		<pre>
+			$content
+		</pre>
+	</div> -->
+
+<!-- Untuk menggunakan note
+	<div class="note">
+		<p>$content</p>
+	</div> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bagus Koko</title>
+	<link rel="stylesheet" href="../assets/styles/designsystem.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	<meta charset="UTF-8">
+	<meta property="og:title" content="Membatasi Command Untuk User di Linux " />
+	<meta property="og:description" content="User user tertentu mungkin perlu kita batasi penggunaan command agar kasus kasus seperti tidak sengaja menjalankan command reboot atau shutdown di server tidak pernah terjadi. Di Linux kita bisa melakukan pembatasan untuk binary command, contohnya agar hanya bisa menjalankan beberapa binary saja." />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="../assets/images/09_limit_user/thumbnail.jpg" />
+	<meta property="og:url" content="https://baguskokow.github.io/membatasi-command-user-linux" />
+</head>
+
+<body>
+	<div class="container-satu">
+		<nav class="wrapper">
+			<div class="brand">
+				<h1>Bagus Koko</h1>
+			</div>
+
+			<ul class="navigation">
+				<li><a href="https://github.com/baguskokow" target='_blank'><img src="../assets/images/global/github.png"></a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="card">
+		<!-- Judul, Author, Waktu, Thumbnail -->
+		<div class="container-dua">
+			<div class="judul">	
+				<h2>Membatasi Command Untuk User di Linux</h2>
+				<br>
+				<div class="keterangan">
+					<div class="author">
+						<p>Bagus Koko Wibawanto</p>
+					</div>
+
+					<div class="time">
+						<img src="../assets/images/global/calendar.png">
+						<p>12 Desember 2023</p>
+					</div>
+				</div>
+			</div>
+					
+			<div class="thumbnail">
+				<img src="../assets/images/09_limit_user/thumbnail.jpg">
+			</div>			
+		</div>
+		
+		<div class="content">
+			<!-- Content dari Artikel -->
+			<div class="isi">
+				<p>User user tertentu mungkin perlu kita batasi penggunaan command agar kasus kasus seperti tidak sengaja menjalankan command reboot atau shutdown di server tidak pernah terjadi. Di Linux kita bisa melakukan pembatasan untuk binary command, contohnya agar hanya bisa menjalankan beberapa binary saja.</p>
+				<br>
+			
+				<p>Kita buat user terlebih dahulu.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ useradd -m buggy -s /bin/rbash
+$ echo buggy:buggy | chpasswd
+
+# rbash = restricted bash
+					</pre>
+				</div>
+
+				<br>
+
+				<p>Buat directory "bin" di dalam home directory user buggy.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ mkdir /home/buggy/bin
+					</pre>
+				</div>
+				<br>
+
+				<p>Buat file ".bash_profile" di dalam home directory user buggy dan isi filenya seperti di bawah ini.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+PATH=$HOME/bin
+
+if [ -f .bashrc ]; then
+        . bashrc
+fi
+					</pre>
+				</div>
+				<br>
+				
+				<p>Kita mendefinisikan PATH variable agar nantinya command command yang ingin kita izinkan untuk user buggy dibuatkan symbolic link ke directory bin tersebut. Dan untuk conditional pada script di atas tujuannya untuk meload file .bashrc.</p>
+				<br>
+
+				<p>Selanjutnya kita buat symbolic link dari binary command tertentu ke folder bin.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ ln -rs /usr/bin/ls /home/buggy/bin/ls
+$ ln -rs /usr/bin/pwd /home/buggy/bin/pwd
+$ ln -rs /usr/bin/whereis /home/buggy/bin/whereis
+$ ln -rs /usr/bin/ssh /home/buggy/bin/ssh
+$ ln -rs /usr/bin/ping /home/buggy/bin/ping
+$ ln -rs /usr/bin/nc /home/buggy/bin/nc
+					</pre>
+				</div>
+				<br>
+
+				<p>Sekarang tinggal kita test dengan cara masuk ke user buggy.</p> <br>
+
+				<p>Test pertama hasilnya adalah tidak bisa melakukan tab atau tidak bisa untuk auto completion.</p>
+
+				<div class="image">
+					<img src="../assets/images/09_limit_user/image1.png">
+				</div>
+	
+				<p>Test kedua adalah mencoba semua binary command yang ada di directory bin.</p>
+
+				<div class="image">
+					<img src="../assets/images/09_limit_user/image2.png">
+				</div>
+
+				<p>Test ketiga adalah mencoba binary command yang tidak ada di directory bin.</p>
+
+				<div class="image">
+					<img src="../assets/images/09_limit_user/image3.png">
+					<img src="../assets/images/09_limit_user/image4.png">
+				</div>
+
+				<p>Kita sudah berhasil untuk membatasi penggunaan command pada user buggy sehingga user buggy hanya bisa menjalankan command yang ada di directory "/home/buggy/bin" dan ini berarti kita sudah menjauhkan dari kasus tidak sengaja menjalankan command.</p> <br>
+				
+
+			<!-- Akhir class isi -->
+			
+			<div class="back">
+				<p><a href="../index.html">&laquo; Back</a></p>
+			</div>
+
+
+		</div>
+	</div>
+
+</body>
+
+</html>
