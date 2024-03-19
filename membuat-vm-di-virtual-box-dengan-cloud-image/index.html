@@ -1,0 +1,311 @@
+<!-- Untuk menggunakan code   
+	<div class="code">
+		<pre>
+			$content
+		</pre>
+	</div> -->
+
+<!-- Untuk menggunakan note
+	<div class="note">
+		<p>$content</p>
+	</div> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bagus Koko</title>
+	<link rel="stylesheet" href="../assets/styles/designsystem.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	<meta charset="UTF-8">
+	<meta property="og:title" content="Membuat VM di Virtual Box dengan Cloud Image" />
+	<meta property="og:description" content="Membuat VM dengan cloud image untuk sekarang ini bisa membantu dalam hal efisiensi, karena dengan menggunakan cloud image, kita tidak perlu berhadapan dengan proses instalasi distro Linux pada umumnya. Jadi vm tersebut bisa langsung booting dan kita bisa melakukan konfigurasi vm tersebut secara deklaratif." />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="../assets/images/11_cloud_image_virtualbox/thumbnail.png" />
+	<meta property="og:url" content="https://baguskokow.github.io/membuat-vm-di-virtual-box-dengan-cloud-image" />
+
+</head>
+
+<body>
+	<div class="container-satu">
+		<nav class="wrapper">
+			<div class="brand">
+				<h1>Bagus Koko</h1>
+			</div>
+
+			<ul class="navigation">
+				<li><a href="https://github.com/baguskokow" target='_blank'><img src="../assets/images/global/github.png"></a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="card">
+		<!-- Judul, Author, Waktu, Thumbnail -->
+		<div class="container-dua">
+			<div class="judul">	
+				<h2>Membuat VM di Virtual Box dengan Cloud Image</h2>
+				<br>
+				<div class="keterangan">
+					<div class="author">
+						<p>Bagus Koko Wibawanto</p>
+					</div>
+
+					<div class="time">
+						<img src="../assets/images/global/calendar.png">
+						<p>19 Maret 2024</p>
+					</div>
+				</div>
+			</div>
+					
+			<div class="thumbnail">
+				<img src="../assets/images/11_cloud_image_virtualbox/thumbnail.png">
+			</div>			
+		</div>
+		
+		<div class="content">
+			<!-- Content dari Artikel -->
+			<div class="isi">
+				<p>Membuat VM dengan cloud image untuk sekarang ini bisa membantu dalam hal efisiensi, karena dengan menggunakan cloud image, kita tidak perlu berhadapan dengan proses instalasi distro Linux pada umumnya. Jadi vm tersebut bisa langsung booting dan kita bisa melakukan konfigurasi vm tersebut secara deklaratif. Pada artikel ini kita akan mencoba membuat VM di Virtual Box dengan menggunakan cloud image. Catatan pada artikel ini adalah penulis menggunakan os openSUSE Leap 15.4 dan untuk pembaca bisa menggunakan distro lain.</p>
+				<br>
+
+				<p>Kita akan menggunakan os ubuntu versi 20.04 (Focal). Akses web <a href="https://cloud-images.ubuntu.com/focal/current/" target="_blank">Official Website Cloud Image Ubuntu</a> untuk mendownload cloud image. Karena di official ubuntu tidak ada image vdi, jadinya kita pakai yang versi ova dan nantinya akan kita convert ke vdi.</p> 
+				<br>
+				
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-1.png">
+				</div>
+
+				<div class="code">
+					<pre>
+$ wget https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.ova
+					</pre>
+				</div>
+				
+				<br>
+
+				<p>Ekstrak file ova tersebut dengan menggunakan command di bawah ini.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ tar -xf focal-server-cloudimg-amd64.ova
+					</pre>
+				</div>
+				<br>
+
+				<p>Hasil ekstrak seperti gambar di bawah ini.</p>
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-2.png">
+				</div>
+
+				<p>Kita akan melakukan clone ubuntu-focal-20.04-cloudimg.vmdk menjadi .vdi dengan menggunakan command di bawah ini.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ sudo VBoxManage clonehd ubuntu-focal-20.04-cloudimg.vmdk ubuntu-server.vdi --format vdi
+					</pre>
+				</div>
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-3.png">
+				</div>
+
+				<p>Biasanya untuk ukuran disk root cloud image hanya berkisar 2 GB. Jadi kita akan melakukan resize untuk disknya agar nantinya partisi root memiliki ukuran sebesar 20GB.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ sudo VBoxManage modifymedium disk ubuntu-server.vdi --resize 20480 
+					</pre>
+				</div>
+				<br>
+
+				<p>Note : --resize dalam MB.</p>
+				<br>
+
+				<p>Verifikasi apakah ukuran disk rootnya sudah 20GB.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ sudo VBoxManage showhdinfo ubuntu-server.vdi 
+UUID:           ad244cfd-d51c-41d5-8dae-d17d9399092a
+Parent UUID:    base
+State:          created
+Type:           normal (base)
+Location:       /home/kokow/Development/virtualbox/ubuntu-server.vdi
+Storage format: vdi
+Format variant: dynamic default
+Capacity:       20480 MBytes
+Size on disk:   1554 MBytes
+Encryption:     disabled
+Property:       AllocationBlockSize=1048576
+					</pre>
+				</div>
+				<br>
+
+				<p>Karena owner dari file ubuntu-server.vdi masih root, maka ubah terlebih dahulu agar menjadi user dan group sekarang ini.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ sudo chown $USERS:$GROUPS ubuntu-server.vdi
+					</pre>
+				</div>
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-18.png">
+				</div>
+				<br>
+
+				<p>Buat cd-rom untuk cloud init, jadi semua konfigurasi vm seperti user, password, ssh_authorized keys, dan sebagainya dilakukan dengan membuat cd-rom cloud init.</p>
+				<br>
+
+				<p>Buat file “user-data” dan “meta-data” dengan konfigurasi seperti di bawah ini.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ vim user-data
+
+#cloud-config
+users:
+  - name: student
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCyKCAsAHtW4LZD9QW3Gs9x9pHtxFTVFkGEiw1HbXJANCAjOsEK1aqTRUJ/55xq0NYPBFGpFpPdKoztrXerOTWAZznSx8xRgJBrBozCPlQ2GTJGH1OHoDL7+0yI4VsRvenV6+fIwLwOU9N2+KC+MG4mwHiv/55JUMnQ+KWy+m/SdR4qPb13t2K+TtRqZMzKS9XimNCJMlP9Nhowhjq1qfyCN01Ck4Ux5O3T5gQxUDkrDcdpVBZCtavF530N6+bYJdskiYFThU/p1yo4cSbfFgwLukqOlWg7KsqS90LJqUdZDe4tk+eBx2ba+d5nRY8ivZMg3XCLrtSfWJbyKI9huN1/MmrFSk6Wu4lvlTDoEFoXpVtqOks5V5vnezjaZGeG+VJ6jiq5VhxyyJvk+vojI51WN2HlPbY7g1Rsld9xWo1BowjytDoWlW3/CFnzFjz15RAC7MqSLb/S89pfvNF2lDz/rgfEuTSdMD6LvYdd/0bG0X8ZFlkHvbXaJxwesBrIrs8= kokow@master
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    groups: sudo
+    shell: /bin/bash
+runcmd:
+  - echo "AllowUsers student" &gt&gt /etc/ssh/sshd_config
+  - restart ssh
+
+chpasswd:
+  list: |
+    student:student
+    root:student
+  expire: False
+
+					</pre>
+				</div>
+				<br>
+				
+				<p>Note : Untuk ssh pubkey diisi dengan laptop/pc masing masing.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ vim meta-data
+
+local-hostname: ubuntu-server
+					</pre>
+				</div>
+				<br>
+				
+				<p>Buat cd-rom cloud init dengan menggunakan tool genisoimage.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ genisoimage -output cidata.iso -V cidata -r -J user-data meta-data
+					</pre>
+				</div>
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-19.png">
+				</div>
+
+				<p>Masuk ke aplikasi virtual box dan buat vmnya. Untuk iso arahkan ke cidata.iso yang telah kita buat sebelumnya.</p>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-4.png">
+				</div>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-5.png">
+				</div>
+
+				<p>Pilih file disk ubuntu-server.vdi sebelumnya yang sudah kita resize.</p>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-6.png">
+				</div>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-7.png">
+				</div>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-8.png">
+				</div>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-9.png">
+				</div>
+
+				<p>Untuk network, penulis menggunakan host only adapter. Berikut detail subnet networknya.</p>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-10.png">
+				</div>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-11.png">
+				</div>
+
+				<p>Masuk ke settingan vmnya dan pastikan iso dan vdi sudah mengarah ke file yang benar.</p>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-12.png">
+				</div>
+
+				<p>Dan untuk network pilih yang host only adapter.</p>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-13.png">
+				</div>
+
+				<p>Start VM, dan tunggu sampai proses booting selesai agar konfigurasi cloud init benar benar terpasang. Jika sudah selesai booting, coba test login dengan menggunakan user dan password yang ada pada konfigurasi user-data. Di sini penulis menggunakan user “student” dan passwordnya adalah “student”.</p>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-14.png">
+				</div>
+
+				<p>Untuk disk ukurannya adalah 20 GB, jadi resize yang kita lakukan sebelumnya berhasil.</p>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-15.png">
+				</div>
+
+				<p>Kita coba cek ipnya dan kita akan gunakan untuk ssh.<p>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-16.png">
+				</div>
+
+				<div class="image">
+					<img src="../assets/images/11_cloud_image_virtualbox/image-17.png">
+				</div>
+
+				<p>Kita sudah berhasil membuat vm dengan menggunakan cloud image di VirtualBox, dan mungkin ini akan efisien untuk kebutuhan ngelab jika memang kita terbiasa menggunakan VirtualBox dari pada menggunakan  cd-rom iso OS yang nantinya harus melewati proses install yang panjang. </p>
+
+			<!-- Akhir class isi -->
+			
+			<div class="back">
+				<p><a href="../index.html">&laquo; Back</a></p>
+			</div>
+
+
+		</div>
+	</div>
+
+</body>
+
+</html>
