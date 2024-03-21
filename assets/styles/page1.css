@@ -1,0 +1,219 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap');
+
+*, html, body {
+	margin: 0;
+	padding: 0;
+	font-family: 'Quicksand', sans-serif;
+	background-color: white;
+	box-sizing: border-box;
+}
+
+p {
+	line-height: 1.5;
+}
+
+.container-satu {
+	min-width: 100%;
+	display: flex;
+	flex-direction: column;
+	background-color: white;
+	border-bottom: 0.5px solid black;
+	box-shadow: 0 2px 3px -2px gray;
+	display: inline;
+}
+
+.wrapper {
+	display: flex;
+	justify-content: space-between;
+	padding: 20px;
+	width: 100%;
+	align-items: center;
+	box-sizing: border-box;
+	position: sticky;
+    top: 0;
+	box-shadow: 0 2px 3px -2px gray;
+}
+
+
+.brand {
+	font-size: 20px;
+	font-weight: 700;
+}
+
+.brand h1 {
+	font-family: 'Roboto', sans-serif;
+}
+
+.navigation {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.navigation > li {
+	list-style-type: none;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+.navigation li a img {
+	width: 35px;
+	padding-right: 10px;
+}
+
+.container-dua {
+	margin: 10px auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	padding: 10px;
+}
+
+.card {
+	box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.4);
+	width: 1000px;
+	margin: 20px auto;
+	padding: 10px;
+	border-radius: 5px;
+	margin-bottom: 0;
+}
+
+.card-dua {
+	border-bottom: 1px solid grey;
+	box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
+	margin: 15px;
+	padding: 15px;
+}
+
+.content {
+	width: 800px;
+	padding: 5px;
+}
+
+.content a {
+	text-decoration: none;
+	color: #2f4f4f;
+}
+
+.content a:hover {
+	color: grey;
+}
+
+.time {
+	display: flex;
+	font-size: 10px;
+	margin-top: 5px;
+}
+
+.time img {
+	width: 17px;
+	padding-right: 5px;
+	box-sizing: border-box;
+}
+
+/* Urutan Content*/
+
+.urut_1 {
+	order: 10;
+}
+
+.urut_2 {
+	order: 9;
+}
+
+.urut_3 {
+	order: 8;
+}
+
+.urut_4 {
+	order: 7;
+}
+
+.urut_5 {
+	order: 6;
+}
+
+.urut_6 {
+	order: 5;
+}
+
+.urut_7 {
+	order: 4;
+}
+
+.urut_8 {
+	order: 3;
+}
+
+.urut_9 {
+	order: 2;
+}
+
+.urut_10 {
+	order: 1;
+}
+
+.next-previous {
+	order: 12;
+}
+
+.next-previous {
+	display: flex;
+	flex-direction: wrap;
+	justify-content: center;
+	padding: 5px;
+	width: 250px;
+	text-align: center;
+	font-weight: bold;
+}
+
+.next-previous p a:hover{
+	font-weight: bold;
+	transition-delay: 0.01s;
+	color: black;
+	text-decoration: none;
+}
+
+.next {
+	flex: 1;
+
+}
+
+.previous {
+	flex: 1;
+}
+
+.next-previous a {
+	text-decoration: none;
+}
+
+/* Responsive Mobile*/
+
+@media screen and (max-width: 800px) {
+	.brand {
+		font-size: 15px;
+		font-weight: 700;
+	}
+
+	.navigation li a img {
+		width: 25px;
+		padding-right: 5px;
+	}
+	
+	.card {
+		width: 96%;
+	}
+	
+	.content {
+		width: 100%;
+	}
+
+	.content h2 {
+		font-size: 18px;
+	}
+
+	.description p {
+		font-size: 13px;
+	}
+}
