@@ -1,0 +1,350 @@
+<!-- Untuk menggunakan code   
+	<div class="code">
+		<pre>
+			$content
+		</pre>
+	</div> -->
+
+<!-- Untuk menggunakan note
+	<div class="note">
+		<p>$content</p>
+	</div> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bagus Koko</title>
+	<link rel="stylesheet" href="../assets/styles/designsystem.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	<meta charset="UTF-8">
+	<meta property="og:title" content="Menjadikan OS Linux Sebagai Hypervisor Type 1" />
+	<meta property="og:description" content="KVM (Kernel-Based Virtual Machine) adalah salah satu hypervisor type 1 yang mana hypervisor type 1 ini adalah hypervisor yang diinstall langsung sebagai OS. KVM ini memanfaatkan kernel Linux sehingga distro distro Linux bisa menjadi hypervisor type 1. . Nantinya kita akan setup KVM sampai bisa digunakan untuk membuat network, menyiapkan image, membuat disk, dan membuat VM." />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="../assets/images/12_menjadikan_os_linux_sebagai_hypervisor_type1/thumbnail.jpg" />
+	<meta property="og:url" content="https://baguskokow.github.io/menjadikan-os-linux-sebagai-hypervisor-type1/" />
+
+</head>
+
+<body>
+	<div class="container-satu">
+		<nav class="wrapper">
+			<div class="brand">
+				<h1>Bagus Koko</h1>
+			</div>
+
+			<ul class="navigation">
+				<li><a href="https://github.com/baguskokow" target='_blank'><img src="../assets/images/global/github.png"></a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="card">
+		<!-- Judul, Author, Waktu, Thumbnail -->
+		<div class="container-dua">
+			<div class="judul">	
+				<h2>Menjadikan OS Linux Sebagai Hypervisor Type 1</h2>
+				<br>
+				<div class="keterangan">
+					<div class="author">
+						<p>Bagus Koko Wibawanto</p>
+					</div>
+
+					<div class="time">
+						<img src="../assets/images/global/calendar.png">
+						<p>27 Maret 2024</p>
+					</div>
+				</div>
+			</div>
+					
+			<div class="thumbnail">
+				<img src="../assets/images/12_menjadikan_os_linux_sebagai_hypervisor_type1/thumbnail.jpg">
+			</div>			
+		</div>
+		
+		<div class="content">
+			<!-- Content dari Artikel -->
+			<div class="isi">
+				<p>KVM (Kernel-Based Virtual Machine) adalah salah satu hypervisor type 1 yang mana hypervisor type 1 ini adalah hypervisor yang diinstall langsung sebagai OS. KVM ini memanfaatkan kernel Linux sehingga distro distro Linux bisa menjadi hypervisor type 1. . Nantinya kita akan setup KVM sampai bisa digunakan untuk membuat network, menyiapkan image, membuat disk, dan membuat VM. Pada artikel ini penulis akan menggunakan OS Ubuntu 20.04 (Focal) dan untuk workdir penulis menggunakan di directory "/vm".</p>
+				<br>
+				<h3>Setup KVM</h3>
+				<br>
+
+				<p>Update repository dan instal cpu-checker.</p>
+				<br>
+				
+				<div class="code">
+					<pre>
+$ sudo apt update && sudo apt install cpu-checker
+					</pre>
+				</div>
+				<br>
+
+				<p>Cek apakah server bisa digunakan sebagai KVM dengan menggunakan cpu-checker.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ kvm-ok
+INFO: /dev/kvm exists 
+KVM acceleration can be used
+					</pre>
+				</div>
+				<br>
+
+				<p>Install beberapa package yang dibutuhkan untuk menjalankan KVM.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ sudo apt install qemu-kvm libvirt-daemon-system virtinst libvirt-clients bridge-utils -y
+					</pre>
+				</div>
+				<br>
+
+				<p>Enable dan aktifkan service libvirtd.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ sudo systemctl enable --now libvirtd
+					</pre>
+				</div>
+				<br>
+
+				<h3>Membuat Network</h3>
+				<br>
+
+				<p>Kita perlu setup network untuk nantinya digunakan pada VM. Di sini kita akan membuat network bridge. Jadi antara server host dan vm nantinya seperti terhubung switch yang sama tetapi virtual. Untuk membuat network lakukan di user root.</p>
+				<br>
+
+				<p>Buat konfigurasi network.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ vim br1.xml
+
+&ltnetwork&gt
+  &ltname&gtbr1&lt/name&gt
+  &ltforward mode='route'/&gt
+  &ltbridge name='virbr1'/&gt
+  &ltip address='10.5.5.1' netmask='255.255.255.0'&gt
+    &ltdhcp&gt
+      &ltrange start='10.5.5.2' end='10.5.5.254'/&gt
+    &lt/dhcp&gt
+  &lt/ip&gt
+&lt/network&gt
+					</pre>
+				</div>
+				<br>
+				
+				<p>Define konfigurasi network.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virsh net-define br1.xml
+$ virsh net-start br1
+$ virsh net-autostart br1
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi network.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virsh net-list 
+$ ip a | grep global
+					</pre>
+				</div>
+
+				<div class="image">
+					<img src="../assets/images/12_menjadikan_os_linux_sebagai_hypervisor_type1/image-1.png">
+				</div>
+
+				<div class="image">
+					<img src="../assets/images/12_menjadikan_os_linux_sebagai_hypervisor_type1/image-2.png">
+				</div>
+
+				<h3>Menyiapkan Image</h3>
+				<br>
+
+				<p>Untuk image yang akan digunakan membuat VM adalah ubuntu 20.04 (focal). Jadi kita akan mendownloadnya dari internet. Akses web <a href="https://cloud-images.ubuntu.com/focal/current/" target="_blank">Official Website Cloud Image Ubuntu</a> untuk mendownload cloud image.</p> 
+
+				<div class="image">
+					<img src="../assets/images/12_menjadikan_os_linux_sebagai_hypervisor_type1/image-3.png">
+				</div>
+
+				<p>Pilih yang .img dan download dengan menggunakan tool wget.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ wget https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+					</pre>
+				</div>
+				<br>
+
+				<p>Buat image dengan menggunakan file focal-server-cloudimg-amd64.img. Jadi nantinya image focal-server-cloudimg-amd64.img tersebut akan menjadi parent dari image baru yang akan kita buat. </p>
+
+				<div class="image">
+					<img src="../assets/images/12_menjadikan_os_linux_sebagai_hypervisor_type1/image-4.png">
+				</div>
+
+				<div class="code">
+					<pre>
+$ qemu-img create -f qcow2 -b focal-server-cloudimg-amd64.img ubuntu-server.qcow2 20G
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi image yang baru kita buat tadi.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ qemu-img info ubuntu-server.qcow2
+image: ubuntu-server.qcow
+file format: qcow2
+virtual size: 20 GiB (21474836480 bytes)
+disk size: 196 KiB
+cluster_size: 65536
+backing file: focal-server-cloudimg-amd64.img
+Format specific information:
+    compat: 1.1
+    lazy refcounts: false
+    refcount bits: 16
+    corrupt: false
+					</pre>
+				</div>
+				<br>
+
+				<p>Note : Jangan mengubah apapun di parent image, karena itu bisa menyebabkan vm rusak, karena image yang kita buat tadi tidak bisa independen. Jadi dia butuh parent image. </p>
+				<br>
+
+				<p>Buat cd-rom untuk cloud init, jadi semua konfigurasi vm seperti user, password, ssh_authorized keys, dan sebagainya dilakukan dengan membuat cd-rom cloud init.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ vim user-data
+#cloud-config
+users:
+  - name: student
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDBOz/7v6Wjve2AYOw6HcjcdYQfnbgaCwwj572OnWAqfvr07imG/3cE0wtneqjorq3JVl03BaPTnJvbxENFMhmtSzH0gDlvgkFrAK+HPDZRWRZDfnAGqWQzqtjjdvvskQe2q31mP0tJGP+Ybi+Jep2rFW1ngH7SALKPpIZCxy7Nuc0MJ7qIcxrMBQ4J4S5DInVF8L3oRl5IECfm3RcakcCc92/WEPPUy8VqfxPpFEqNYgDnYkPtbGD0SrvUBkB5mDQaxxdGhdEjLkjsp4fncFDPTP2ceJ9j5w7A7hK7+EnD2dW/vXbSUDyPsGicuRVTwOIuozlW90wa0YgDKK3EP0/Wh+W6rX+FWasWcOpsWdLS5yo0nHqPBL+NP+e1ckG42DND1tjMRf+fObvBjoXYd029O4F2Gjv7hcgi554yGMDPM4VIqWbBENEo153+oBt/eNqFPSHw/TOZGAZwzhsmur88/WY6l8m9Iz0SxcKvnhXXW+DISUd5XnSTiNmdAaWl28k= root@ceph-osd2
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    groups: sudo
+    shell: /bin/bash
+runcmd:
+  - echo "AllowUsers student" &gt&gt /etc/ssh/sshd_config
+  - restart ssh
+
+chpasswd:
+  list: |
+    student:student
+    root:student
+  expire: False
+					</pre>
+				</div>
+				<br>
+
+				<div class="code">
+					<pre>
+$ vim meta-data
+local-hostname: ubuntu-server
+					</pre>
+				</div>
+				<br>
+
+				<p>Buat cd-rom cloud init dengan menggunakan tool genisoimage.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ genisoimage -output cidata.iso -V cidata -r -J user-data meta-data
+					</pre>
+				</div>
+				<br>
+
+				<h3>Membuat VM</h3>
+				<br>
+			
+				<p>Setelah semua yang dibutuhkan untuk membuat vm sudah siap, kita bisa langsung membuat vmnya.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virt-install --name=ubuntu-server --ram=700 --vcpus=1 --import --disk path=/vm/ubuntu-server.qcow2,format=qcow2 --disk path=/vm/cidata.iso,device=cdrom --os-variant=ubuntu20.04 --network bridge=virbr1,model=virtio --graphics spice,listen=0.0.0.0 --noautoconsole
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi apakah vm sudah berhasil dibuat.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virsh list
+Id   Name            State
+-------------------------------
+3    ubuntu-server   running
+					</pre>
+				</div>
+				<br>
+
+				<p>Test masuk ke consolenya.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virsh console ubuntu-server
+					</pre>
+				</div>
+				<br>
+				
+				<div class="image">
+					<img src="../assets/images/12_menjadikan_os_linux_sebagai_hypervisor_type1/image-5.png">
+				</div>
+
+				<div class="image">
+					<img src="../assets/images/12_menjadikan_os_linux_sebagai_hypervisor_type1/image-6.png">
+				</div>
+
+				<p>Test masuk ke VM dengan menggunakan SSH.</p>
+
+				<div class="image">
+					<img src="../assets/images/12_menjadikan_os_linux_sebagai_hypervisor_type1/image-7.png">
+				</div>
+
+				<p>VM sudah berhasil dibuat dengan menggunakan hypervisor KVM. Jadi dengan menggunakan KVM kita bisa menjadikan server linux menjadi hypervisor type-1.</p>
+				<br><br><br>
+
+				<h3>Referensi</h3>
+				<br>
+
+				<p>- redhat.com. (11 Mei 2022). What is KVM?. Diakses pada 21 Maret 2024, dari https://www.redhat.com/en/topics/virtualization/what-is-KVM</p>
+				<br>
+				<p>- www.linuxtechi.com. (29 September 2023). How to Install KVM on Ubuntu 22.04 Step-by-Step. Diakses pada 22 Maret 2024, dari https://www.linuxtechi.com/how-to-install-kvm-on-ubuntu-22-04/</p>
+				<br>
+				<p>- blog.roundside.com. (25 Mei 2014). Useful things about backing file in qemu/kvm. Diakses pada 26 Maret 2024, dari https://blog.roundside.com/usefull-things-about-backing-file-in-qemukvm/</p>
+				<br>
+
+
+			<!-- Akhir class isi -->
+			
+			<div class="back">
+				<p><a href="../index.html">&laquo; Back</a></p>
+			</div>
+
+
+		</div>
+	</div>
+
+</body>
+
+</html>
