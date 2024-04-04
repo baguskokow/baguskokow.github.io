@@ -1,0 +1,653 @@
+<!-- Untuk menggunakan code   
+	<div class="code">
+		<pre>
+			$content
+		</pre>
+	</div> -->
+
+<!-- Untuk menggunakan note
+	<div class="note">
+		<p>$content</p>
+	</div> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bagus Koko</title>
+	<link rel="stylesheet" href="../assets/styles/designsystem.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	<meta charset="UTF-8">
+	<meta property="og:title" content="Integrasi KVM dengan Ceph" />
+	<meta property="og:description" content="Kita bisa membuat VM dengan menggunakan KVM, tetapi semua data data vm tersimpan di dalam host tersebut. Jika misalnya kita perlu melakukan reboot server hostnya, maka vm yang di atasnya akan terkena reboot juga. Dengan menggunakan Ceph sebagai penyimpanan data vmnya, kita bisa memindahkan vm tersebut ke server host yang lain. Dengan begitu vm tidak akan terkena reboot. Distributed storage seperti ceph dibutuhkan dalam Cloud Computing." />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="../assets/images/13_integrasi_kvm_dengan_ceph/thumbnail.jpg" />
+	<meta property="og:url" content="https://baguskokow.github.io/integrasi-kvm-dengan-ceph/" />
+
+</head>
+
+<body>
+	<div class="container-satu">
+		<nav class="wrapper">
+			<div class="brand">
+				<h1>Bagus Koko</h1>
+			</div>
+
+			<ul class="navigation">
+				<li><a href="https://github.com/baguskokow" target='_blank'><img src="../assets/images/global/github.png"></a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="card">
+		<!-- Judul, Author, Waktu, Thumbnail -->
+		<div class="container-dua">
+			<div class="judul">	
+				<h2>Integrasi KVM dengan Ceph</h2>
+				<br>
+				<div class="keterangan">
+					<div class="author">
+						<p>Bagus Koko Wibawanto</p>
+					</div>
+
+					<div class="time">
+						<img src="../assets/images/global/calendar.png">
+						<p>4 April 2024</p>
+					</div>
+				</div>
+			</div>
+					
+			<div class="thumbnail">
+				<img src="../assets/images/13_integrasi_kvm_dengan_ceph/thumbnail.jpg">
+			</div>			
+		</div>
+		
+		<div class="content">
+			<!-- Content dari Artikel -->
+			<div class="isi">
+				<p>Kita bisa membuat VM dengan menggunakan KVM, tetapi semua data data vm tersimpan di dalam host tersebut. Jika misalnya kita perlu melakukan reboot server hostnya, maka vm yang di atasnya akan terkena reboot juga. Dengan menggunakan Ceph sebagai penyimpanan data vmnya, kita bisa memindahkan vm tersebut ke server host yang lain. Dengan begitu vm tidak akan terkena reboot. Distributed storage seperti Ceph dibutuhkan dalam Cloud Computing.</p>
+				<br>
+
+				<p>Kita akan menggunakan libvirt untuk menghubungkan Ceph dengan KVM. Libvirt adalah library hypervisor seperti KVM. Libvirt berkomunikasi dengan KVM, jadi kita hanya memberikan beberapa perintah saja untuk mengelola KVM. Penulis sudah menyiapkan cluster Ceph dan sudah melakukan setup KVM. Pada artikel ini penulis akan memberikan referensi untuk menyiapkan cluster ceph dan juga artikel untuk melakukan setup KVM sampai bisa digunakan. Referensi ada di akhir artikel.</p>
+				<br>
+		
+				<p>Topologi yang penulis gunakan adalah seperti di bawah ini.</p>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-1.png">
+				</div>
+
+				<p>Penulis menggunakan total empat server. Tiga server untuk cluster Ceph, ceph-admin, ceph-osd1, ceph-osd2, dan satu server lagi untuk KVM, libvirt-client. Kita nanti akan melakukan setup agar KVM bisa diintegrasikan dengan Ceph, dan nantinya kita akan membuat VM yang semua datanya tersimpan di dalam Ceph.</p>
+				<br>
+
+				<p>Karena untuk setup cluster Ceph dan setup KVM akan panjang jika ditulis pada artikel ini. Jadi untuk setup Ceph, pembaca bisa akses artikel dari blog blog.ajiarya.id dan yudiwiratama.medium.com, dan untuk setup KVM bisa diakses dari blog baguskokow.github.io. Untuk link lengkap ada di referensi.</p>
+				<br>
+
+				<h3>Menyiapkan Pool di Ceph untuk KVM</h3>
+				<br>
+
+				<p>Buat pool ceph.</p>
+				<br>
+				
+				<div class="code">
+					<pre>
+$ ceph osd pool create libvirt-pool 128 128 
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi pool yang tadi baru dibuat.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ ceph osd lspools 
+1 device_health_metrics 
+2 libvirt-pool
+					</pre>
+				</div>
+				<br>
+
+				<p>Inisialisasi pool libvirt-pool untuk digunakan sebagai RBD.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ rbd pool init libvirt-pool
+					</pre>
+				</div>
+				<br>
+
+				<p>Buat user libvirt di Ceph.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ ceph auth get-or-create client.libvirt mon 'profile rbd' osd 'profile rbd pool=libvirt-pool'
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi user libvirt.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ ceph auth export client.libvirt 
+[client.libvirt] 
+key = AQB2Fg1mBqyEARAA5mz9ol+xPoay6sT5mBgrEg== 
+caps mon = "profile rbd" 
+caps osd = "profile rbd pool=libvirt-pool" 
+export auth(key=AQB2Fg1mBqyEARAA5mz9ol+xPoay6sT5mBgrEg==)
+					</pre>
+				</div>
+				<br>
+
+				<h3>Integrasikan Libvirt dengan Ceph</h3>
+				<br>
+
+				<p>Install ceph-common di server libvirt-client.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ sudo apt install ceph-common
+					</pre>
+				</div>
+				<br>
+
+				<p>Salin keyring admin dan ceph.conf dari server ceph-admin ke server libvirt-client.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ scp /etc/ceph/ceph.client.admin.keyring root@libvirt-client:/etc/ceph/
+$ scp /etc/ceph/ceph.conf root@libvirt-client:/etc/ceph/
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi menjalankan command ceph di server libvirt-client.</p>
+				
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-2.png">
+				</div>
+				
+				<p>Define variable variable untuk mempermudahkan melakukan konfigurasi.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+export CEPH_PGS="128"
+export CEPH_USER="libvirt"
+export CEPH_POOL="libvirt-pool"
+export CEPH_RADOS_HOST="192.168.11.211"
+export CEPH_RADOS_PORT="6789"
+export VIRT_SCRT_UUID="$(uuidgen)"
+export VIRT_SCRT_PATH="/tmp/libvirt-secret.xml"
+export VIRT_POOL_PATH="/tmp/libvirt-rbd-pool.xml"
+					</pre>
+				</div>
+				<br>
+
+				<p>Buat file xml libvirt secret untuk autentikasi.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ cat &gt "${VIRT_SCRT_PATH}" &lt&ltEOF
+&ltsecret ephemeral='no' private='no'&gt
+&ltuuid&gt${VIRT_SCRT_UUID}&lt/uuid&gt
+&ltusage type='ceph'&gt
+&ltname&gtclient.${CEPH_USER} secret&lt/name&gt
+&lt/usage&gt
+&lt/secret&gt
+EOF
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi file libvirt secret yang tadi kita buat.</p>
+				
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-3.png">
+				</div>
+
+				<p>Define libvirt secret.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virsh secret-define --file "${VIRT_SCRT_PATH}" 
+Secret 81e969ad-f4aa-49f2-a46a-ef529a27e048 created
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi libvirt secret yang telah dibuat.</p>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-4.png">
+				</div>
+
+				<p>Set secret value dengan keyring client.libvirt.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virsh secret-set-value --secret 81e969ad-f4aa-49f2-a46a-ef529a27e048 --base64 "$(ceph auth get-key client.libvirt)" 
+Secret value set
+					</pre>
+				</div>
+				<br>
+
+				<p>Buat file xml untuk storage pool Ceph di libvirt.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+cat &gt "${VIRT_POOL_PATH}" &gt&gtEOF
+&ltpool type="rbd"&gt
+&ltname&gt${CEPH_POOL}&lt/name&gt
+&ltsource&gt
+&ltname&gt${CEPH_POOL}&lt/name&gt
+&lthost name='${CEPH_RADOS_HOST}' port='${CEPH_RADOS_PORT}' /&gt
+&ltauth username='${CEPH_USER}' type='ceph'&gt
+&ltsecret uuid='${VIRT_SCRT_UUID}'/&gt
+&lt/auth&gt
+&lt/source&gt
+&lt/pool&gt
+EOF
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi file xml storage pool yang udah dibuat.</p>
+				
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-5.png">
+				</div>
+
+				<p>Define & Start pool storage.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virsh pool-define "${VIRT_POOL_PATH}"
+$ virsh pool-start "${CEPH_POOL}"
+$ virsh pool-autostart "${CEPH_POOL}"
+					</pre>
+				</div>
+				<br>
+				
+				<p>Verifikasi pool storage.</p>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-6.png">
+				</div>
+				
+				<h3>Test Membuat Disk Kosong</h3>
+				<br>
+
+				<p>Kita akan mencoba test untuk membuat disk kosong terlebih dahulu, setelah berhasil nantinya kita akan melakukan test yang kedua, yaitu membuat VM.</p>
+				<br>
+
+				<p>Buat disk kosong dengan menggunakan command ini.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virsh vol-create-as libvirt-pool test --capacity 1G --format raw 
+Vol test created
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi dari sisi Ceph apakah sudah ada disk kosong yang tadi kita buat.</p>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-7.png">
+				</div>
+
+				<h3>Test Membuat VM</h3>
+				<br>
+
+				<p>Pada percobaan kali ini, penulis akan membuat vm dengan image, iso cloud-init, dan disk kosong disimpan di dalam ceph. Jadi semua VM akan disimpan di dalam ceph. Untuk OS yang akan dipakai untuk membuat vm adalah Ubuntu 20.04.</p>
+				<br>
+
+				
+				<p>Buat konfigurasi network.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ vim br1.xml
+
+&ltnetwork&gt
+  &ltname&gtbr1&lt/name&gt
+  &ltforward mode='route'/&gt
+  &ltbridge name='virbr1'/&gt
+  &ltip address='10.5.5.1' netmask='255.255.255.0'&gt
+    &ltdhcp&gt
+      &ltrange start='10.5.5.2' end='10.5.5.254'/&gt
+    &lt/dhcp&gt
+  &lt/ip&gt
+&lt/network&gt
+					</pre>
+				</div>
+				<br>
+				
+				<p>Define konfigurasi network.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virsh net-define br1.xml
+$ virsh net-start br1
+$ virsh net-autostart br1
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi network.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virsh net-list 
+$ ip a | grep global
+					</pre>
+				</div>
+				
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-8.png">
+				</div>
+
+				<p>Download image ubuntu 20.04 dari official ubuntu. Akses web <a href="https://cloud-images.ubuntu.com/focal/current/" target="_blank">Official Website Cloud Image Ubuntu</a> untuk mendownload cloud image.</p> 
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-9.png">
+				</div>
+
+				<p>Pilih yang .img dan download dengan menggunakan tool wget.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ wget https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+					</pre>
+				</div>
+				<br>
+
+				<p>Convert image dari .qcow2 menjadi .raw</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ qemu-img convert -f qcow2 -O raw focal-server-cloudimg-amd64.img ubuntu-focal.raw
+					</pre>
+				</div>
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-10.png">
+				</div>
+
+				<p>Import image ubuntu-focal.raw ke Ceph.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ rbd import --dest-pool libvirt-pool ubuntu-focal.raw --dest ubuntu-focal
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi image yang kita import di dalam Ceph.</p>
+				
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-11.png">
+				</div>
+
+				<p>Buat snapshot dari image ubuntu-focal sebelumnya.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ rbd snap create libvirt-pool/ubuntu-focal@snap-ubuntu-focal
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi snapshot yang telah dibuat.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ rbd snap ls libvirt-pool/ubuntu-focal
+					</pre>
+				</div>
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-12.png">
+				</div>
+
+				<p>Buat agar snapshot menjadi protected.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ rbd snap protect libvirt-pool/ubuntu-focal@snap-ubuntu-focal
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi snapshot untuk memastikan sudah menjadi protected.</p>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-13.png">
+				</div>
+
+				<p>Clone snapshot agar menjadi image baru.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ rbd clone libvirt-pool/ubuntu-focal@snap-ubuntu-focal libvirt-pool/mugiwara-vm
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi image baru hasil clone.</p>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-14.png">
+				</div>
+
+				<p>Resize agar sizenya menjadi 20GB, karena itu adalah ukuran partisi root (/).</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ rbd resize libvirt-pool/mugiwara-vm --size 20480
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi untuk memastikan ukuran imagenya sudah menjadi 20GB.</p>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-15.png">
+				</div>
+
+				<p>Buat konfigurasi cloud-init.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ vim user-data
+
+#cloud-config
+users:
+  - name: student
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC1VPSd8YVb0ZxAdX+yWdXpN/zUZusjfu9gaS/bj6ZZu8DhaN5EJVPMHiZQy0XtU0HTHzQQi4LB4B0aTHhpvJYmT2CfcXACxlCJh9aJ9kdVnAzX2fDp7fviy1jFax5dJ2wEIkGs3rss/G2TuTkG6CuA30axz+1EJpmmUZ1hwR4zOlXDPaFa7qOVXA+eUdAPekrAjpdfgxAnj/qq2hDzUsDolr6AgYQYGhiEttLm1q469L89LhdKh51bO4GDMdP86H9LlaTNEVRdULbF9iaywftgQ52zpqvuVxgPCRVHVwLKGUefLv7DOBDGVwo0AMzEAGTN15mTgvFzUGSiWJeqkCGezvjHgGsW1SuNvLaDGJIubDZBoF1HKILuS75ZHJsIIQ8DA+NppsqMIEBa3e+A3PpB+0DCAsqZck46+UA11kIr/ypV/zhKax+8ZW0Q0mQvyDmYFi/n48xMHLnBwDwIxe7i5pn7PASb6umzijZv8VwbI+tJ8ly5NjcZn87PTKK9cB0= root@libvirt-client
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    groups: sudo
+    shell: /bin/bash
+runcmd:
+  - echo "AllowUsers student" &gt&gt /etc/ssh/sshd_config
+  - restart ssh
+
+chpasswd:
+  list: |
+    student:student
+    root:student
+  expire: False
+					</pre>
+				</div>
+				<br>
+
+				<div class="code">
+					<pre>
+$ vim meta-data
+
+local-hostname: mugiwara
+					</pre>
+				</div>
+				<br>
+
+				<p>Buat cd-rom cloud init dengan menggunakan tool genisoimage.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ genisoimage -output cidata.iso -V cidata -r -J user-data meta-data
+					</pre>
+				</div>
+				<br>
+
+				<p>Import cidata.iso ke Ceph.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ rbd import --dest-pool libvirt-pool cidata.iso
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi cidata.iso di dalam Ceph.</p>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-16.png">
+				</div>
+
+				<p>Buat disk kosong untuk tambahan disk vmnya.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ rbd create --size 5120 libvirt-pool/mugiwara-disk1
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi disk kosong yang baru dibuat.</p>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-17.png">
+				</div>
+
+				<p>Buat VM.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virt-install --name=mugiwara-server --ram=1024 --vcpus=1 --import \
+--disk vol=libvirt-pool/mugiwara-vm,format=qcow2 \
+--disk vol=libvirt-pool/cidata.iso,device=cdrom \
+--disk vol=libvirt-pool/mugiwara-disk1,format=qcow2 \
+--os-variant=ubuntu20.04 \
+--network bridge=virbr1,model=virtio  --noautoconsole
+					</pre>
+				</div>
+				<br>
+
+				<p>Verifikasi VM yang telah dibuat.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virsh list
+					</pre>
+				</div>
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-18.png">
+				</div>
+
+				<p>Check IP yang didapat dari mugiwara-server.</p>
+				<br>
+
+				<div class="code">
+					<pre>
+$ virsh net-dhcp-leases br1
+					</pre>
+				</div>
+				<br>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-19.png">
+				</div>
+
+				<p>Test SSH.</p>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-20.png">
+				</div>
+
+				<div class="image">
+					<img src="../assets/images/13_integrasi_kvm_dengan_ceph/image-21.png">
+				</div>
+				
+				<h3>Kesimpulan</h3>
+				<br>
+
+				<p>Kita telah berhasil mengintegrasikan KVM dengan Ceph. Jadi semua data VM akan tersimpan di dalam Ceph. Ini adalah kelebihan dari distributed storage seperti Ceph. Kita akan dipermudah bila suatu waktu kita butuh untuk migrasi vm ke host lain. Jadi semua host KVM bisa menggunakan storage yang sama, tanpa perlu disimpan di dalam server host masing masing.</p>
+				<br><br><br>
+
+				<h3>Referensi</h3>
+				<br>
+
+				<p>- blog.ajiarya.id. (30 Agustus 2022). Cara Deploy Ceph Quincy Secara Manual. Diakses pada 2 April 2024, dari https://blog.ajiarya.id/posts/ceph/cara-deploy-ceph-secara-manual/</p>
+				<br>
+				<p>- yudiwiratama.medium.com. (22 Juni 2023). Deploy Ceph Cluster Quincy Manual. Diakses pada 2 April 2024, dari https://yudiwiratama.medium.com/deploy-ceph-cluster-quincy-manual-6-node-96ac4644710e</p>
+				<br>
+				<p>- sumit-ghosh.com. (8 September 2020). Virtualization and Hypervisors :: Explaining QEMU, KVM, and Libvirt. Diakses pada 3 April 2024, dari https://sumit-ghosh.com/posts/virtualization-hypervisors-explaining-qemu-kvm-libvirt/</p>
+				<br>
+				<p>- baguskokow.github.io. (27 Maret 2024). Menjadikan OS Linux Sebagai Hypervisor Type 1. Diakses pada 3 April 2024, dari https://baguskokow.github.io/menjadikan-os-linux-sebagai-hypervisor-type1/</p>
+				<br>
+				<p>- insujang.github.io. (4 Maret 2021). Using Ceph RBD as a QEMU Storage . Diakses pada 15 Maret 2024, dari https://insujang.github.io/2021-03-04/using-ceph-rbd-as-a-qemu-storage/</p>
+				<br>
+				<p>- log.modest-destiny.com. (7 Oktober 2019). Add Ceph RBD Storage Pool to KVM/QEMU/Libvirt. Diakses pada 15 Maret 2024, dari https://blog.modest-destiny.com/posts/kvm-libvirt-add-ceph-rbd-pool/</p>
+				<br>
+				<p>- docs.ceph.com. (-). Using libvirt with Ceph RBD. Diakses pada 15 Maret 2024, dari https://docs.ceph.com/en/nautilus/rbd/libvirt/</p>
+
+
+			<!-- Akhir class isi -->
+			
+			<div class="back">
+				<p><a href="../index.html">&laquo; Back</a></p>
+			</div>
+
+
+		</div>
+	</div>
+
+</body>
+
+</html>
